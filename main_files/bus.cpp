@@ -1,9 +1,9 @@
 #include "../header_files/bus.h"
 
-uint8_t bus_read(uint16_t address) {
+unsigned char bus_read(unsigned short address) {
     return 0;
 }
 
-void bus_write(uint16_t address, uint8_t value) {
+void bus_write(unsigned short address, unsigned char value) {
     
 }

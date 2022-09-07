@@ -66,6 +66,6 @@ emu_struct *emu_get_struct() {
     return &context;
 }
 
-void delay(uint32_t ms) {
+void delay(unsigned int ms) {
     SDL_Delay(ms);
 }

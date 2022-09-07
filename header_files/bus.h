@@ -2,6 +2,6 @@
 #include "reusable.h"
 
 //Reads from the bus
-uint8_t bus_read(uint16_t address);
+unsigned char bus_read(unsigned short address);
 //Writes to the bus
-void bus_write(uint16_t address, uint8_t value);
+void bus_write(unsigned short address, unsigned char value);

@@ -151,8 +151,8 @@ bool cart_load (std::string cart) {
     std::cout << "  LIC Code: " << std::hex << context.header->lic_code << "(" << cart_lic_name() << ")" << std::endl;
     std::cout << "  Rom Version: " << std::hex << context.header->version << std::endl;
 
-    uint16_t x = 0;
-    for(uint16_t i = 0x0134; i <= 0x014C; i++)
+    unsigned short x = 0;
+    for(unsigned short i = 0x0134; i <= 0x014C; i++)
         x = x - context.rom_data[i] - 1;
     std::cout << "  Checksum: " << std::hex << x;
     if(x & 0xFF)

@@ -5,7 +5,7 @@
 typedef struct {
     bool paused;
     bool running;
-    uint64_t ticks;
+    unsigned long long ticks;
 } emu_struct;
 
 //Main emulator function

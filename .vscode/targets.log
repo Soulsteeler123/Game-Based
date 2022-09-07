@@ -5,8 +5,9 @@ make.exe all -C c:\Users\Jordan\Desktop\Program_Shit\Game-Based\main_files --pri
 # License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
+ 
 
-# Make data base, printed on Wed Sep 07 09:03:07 2022
+# Make data base, printed on Wed Sep 07 09:42:31 2022
 
 # Variables
 
@@ -41,7 +42,7 @@ MAKE_COMMAND := make.exe
 # automatic
 @D = $(patsubst %/,%,$(patsubst %\,%,$(dir $@)))
 # environment
-CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_920_UXRPXBMJFBMNEVYJ
+CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_2252_ILVSWEPIHANVMCHK
 # environment
 VS160COMCOMNTOOLS = C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools\
 # environment
@@ -93,7 +94,7 @@ MAKEFILE_LIST := Makefile
 # automatic
 @F = $(notdir $@)
 # environment
-VSCODE_PID = 920
+VSCODE_PID = 2252
 # automatic
 ?D = $(patsubst %/,%,$(patsubst %\,%,$(dir $?)))
 # automatic
@@ -125,8 +126,7 @@ MAKELEVEL := 0
 # default
 MAKE = $(MAKE_COMMAND)
 # environment
-PATH = C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\ProgramData\chocolatey\bin;A:\NodeJS\;C:\Program Files\Git\cmd;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin;C:\Program Files\dotnet\;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\lib\make\tools\install\bin;C:\mingw64\bin;C:\Program Files (x86)\GnuWin32\bin;C:\cygwin64\bin;C:\Program Files\CMake\bin;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Users\Jordan\AppData\Local\Programs\Python\Python38\Scripts\;C:\Users\Jordan\AppData\Local\Programs\Python\Python38\;C:\Users\Jordan\AppData\Local\Microsoft\WindowsApps;C:\Users\Jordan\AppData\Roaming\cabal\bin;C:\ProgramData\chocolatey\lib\ghc\tools\ghc-8.10.2\bin;C:\tools\msys64;C:\Users\Jordan\AppData\Local\GitHubDesktop\bin;C:\Program Files\Graphviz\bin;C:\Users 
-\Jordan\AppData\Roaming\npm;C:\Users\Jordan\.dotnet\tools;C:\Users\Jordan\AppData\Local\Programs\Microsoft VS Code\bin
+PATH = C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\ProgramData\chocolatey\bin;A:\NodeJS\;C:\Program Files\Git\cmd;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin;C:\Program Files\dotnet\;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\lib\make\tools\install\bin;C:\mingw64\bin;C:\Program Files (x86)\GnuWin32\bin;C:\cygwin64\bin;C:\Program Files\CMake\bin;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Users\Jordan\AppData\Local\Programs\Python\Python38\Scripts\;C:\Users\Jordan\AppData\Local\Programs\Python\Python38\;C:\Users\Jordan\AppData\Local\Microsoft\WindowsApps;C:\Users\Jordan\AppData\Roaming\cabal\bin;C:\ProgramData\chocolatey\lib\ghc\tools\ghc-8.10.2\bin;C:\tools\msys64;C:\Users\Jordan\AppData\Local\GitHubDesktop\bin;C:\Program Files\Graphviz\bin;C:\Users\Jordan\AppData\Roaming\npm;C:\Users\Jordan\.dotnet\tools;C:\Users\Jordan\AppData\Local\Programs\Microsoft VS Code\bin
 # environment
 COMPUTERNAME = DESKTOP-5S636E9
 # default
@@ -216,7 +216,7 @@ PROCESSOR_IDENTIFIER = AMD64 Family 23 Model 113 Stepping 0, AuthenticAMD
 
 # Directories
 
-# . (key c:/Users/Jordan/Desktop/Program_Shit/Game-Based/main_files, mtime 1662513099): 12 files, no impossibilities.
+# . (key c:/Users/Jordan/Desktop/Program_Shit/Game-Based/main_files, mtime 1662557627): 12 files, no impossibilities.
 
 # 12 files, no impossibilities in 1 directories.
 
@@ -287,6 +287,6 @@ all:
 # strcache performance: lookups = 23 / hit rate = 30%
 # hash-table stats:
 # Load=16/8192=0%, Rehash=0, Collisions=0/23=0%
-# Finished Make data base on Wed Sep 07 09:03:07 2022
+# Finished Make data base on Wed Sep 07 09:42:31 2022
 
  
