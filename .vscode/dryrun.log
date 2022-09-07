@@ -1,0 +1,5 @@
+make.exe -C c:\Users\Jordan\Desktop\Program_Shit\Game-Based\main_files --dry-run --always-make --keep-going --print-directory
+make: Entering directory 'c:/Users/Jordan/Desktop/Program_Shit/Game-Based/main_files'
+g++ -I../src/Include -L../src/lib -o main main.cpp cpu.cpp bus.cpp cart.cpp ppu.cpp timer.cpp -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf
+make: Leaving directory 'c:/Users/Jordan/Desktop/Program_Shit/Game-Based/main_files'
+ 
