@@ -61,6 +61,8 @@
         "string_view": "cpp",
         "iomanip": "cpp",
         "sstream": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "xlocmon": "cpp",
+        "xloctime": "cpp"
     }
 }

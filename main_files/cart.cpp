@@ -124,7 +124,6 @@ std::string rom_type() {
 }
 
 
-//Finish cartridge dipshit
 bool cart_load (std::string cart) {
     context.filename = cart;
     std::ifstream file(cart, std::ios::in | std::ios::binary | std::ios::ate);
@@ -145,11 +144,11 @@ bool cart_load (std::string cart) {
 
     std::cout << "Cartridge loaded" << std::endl;
     std::cout << "  Title: " << context.header->title << std::endl;
-    std::cout << "  Type: " << std::hex << context.header->type << "(" << rom_type() << ")" << std::endl;
-    std::cout << "  ROM Size: " << std::hex << context.header->rom_size << std::endl;
-    std::cout << "  Ram Size: " << std::hex << context.header->ram_size << std::endl;
-    std::cout << "  LIC Code: " << std::hex << context.header->lic_code << "(" << cart_lic_name() << ")" << std::endl;
-    std::cout << "  Rom Version: " << std::hex << context.header->version << std::endl;
+    std::cout << "  Type: "  << context.header->type << "(" << rom_type() << ")" << std::endl;
+    std::cout << "  ROM Size: " << (32 << context.header->rom_size) << " KB" << std::endl;
+    std::cout << "  Ram Size: "  << context.header->ram_size << std::endl;
+    std::cout << "  LIC Code: "  << context.header->lic_code << "(" << cart_lic_name() << ")" << std::endl;
+    std::cout << "  Rom Version: "  << context.header->version << std::endl;
 
     unsigned short x = 0;
     for(unsigned short i = 0x0134; i <= 0x014C; i++)
