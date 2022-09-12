@@ -1,4 +1,4 @@
-#include "../header_files/bus.h"
+#include "bus.h"
 
 unsigned char bus_read(unsigned short address) {
     return 0;

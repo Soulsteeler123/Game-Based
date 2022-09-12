@@ -1,9 +1,9 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
-#include "../header_files/main.h"
-#include "../header_files/cart.h"
-#include "../header_files/cpu.h"
+#include <SDL2/SDl_ttf.h>
+#include "main.h"
+#include "Cartridge/cart.h"
+#include "CPU/cpu.h"
 
 //Contains all emulator context
 static emu_struct context;
@@ -11,7 +11,6 @@ static emu_struct context;
 //Initial function to be called
 int main(int argc, char* argv[]){
     emu_main(argc, argv);
-
     return 0;
 }
 

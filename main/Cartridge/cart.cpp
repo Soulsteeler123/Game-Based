@@ -1,4 +1,4 @@
-#include "../header_files/cart.h"
+#include "cart.h"
 
 typedef struct {
     std::string filename;
@@ -140,7 +140,6 @@ bool cart_load (std::string cart) {
     file.read(context.rom_data, context.rom_size);
     file.close();
     context.header = (rom_header *)(context.rom_data + 0x100);
-    context.header->title[15] = 0;
 
     std::cout << "Cartridge loaded" << std::endl;
     std::cout << "  Title: " << context.header->title << std::endl;

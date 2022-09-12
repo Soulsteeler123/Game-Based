@@ -1,4 +1,4 @@
-#include "../header_files/cpu.h"
+#include "cpu.h"
 
 void cpu_init() {
 

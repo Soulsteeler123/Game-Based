@@ -1,13 +1,14 @@
 make.exe all -C c:\Users\Jordan\Desktop\Program_Shit\Game-Based\main_files --print-data-base --no-builtin-variables --no-builtin-rules --question
+make: *** c:\Users\Jordan\Desktop\Program_Shit\Game-Based\main_files: No such file or directory.  Stop.
+
 # GNU Make 4.3
 # Built for Windows32
 # Copyright (C) 1988-2020 Free Software Foundation, Inc.
 # License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
- 
 
-# Make data base, printed on Wed Sep 07 11:45:58 2022
+# Make data base, printed on Mon Sep 12 09:00:37 2022
 
 # Variables
 
@@ -39,10 +40,8 @@ PROCESSOR_LEVEL = 23
 PSMODULEPATH = C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules
 # default
 MAKE_COMMAND := make.exe
-# automatic
-@D = $(patsubst %/,%,$(patsubst %\,%,$(dir $@)))
 # environment
-CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_15428_NBUHZVKUPXYVQSKM
+CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_6192_QCGLUTRZOQMGRWCX
 # environment
 VS160COMCOMNTOOLS = C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools\
 # environment
@@ -51,12 +50,6 @@ FPS_BROWSER_USER_PROFILE_STRING = Default
 VSCODE_HANDLES_UNCAUGHT_ERRORS = true
 # default
 .VARIABLES := 
-# automatic
-%D = $(patsubst %/,%,$(patsubst %\,%,$(dir $%)))
-# automatic
-^D = $(patsubst %/,%,$(patsubst %\,%,$(dir $^)))
-# automatic
-%F = $(notdir $%)
 # environment
 VSCODE_CODE_CACHE_PATH = C:\Users\Jordan\AppData\Roaming\Code\CachedData\784b0177c56c607789f9638da7b6bf3230d47a8c
 # environment
@@ -65,52 +58,26 @@ LANG = C
 .LOADED := 
 # environment
 TMP = C:\Users\Jordan\AppData\Local\Temp
-# default
-.INCLUDE_DIRS = .
 # environment
 PROCESSOR_ARCHITEW6432 = AMD64
-# makefile
-MAKEFLAGS = pqrRw
 # environment
 ONEDRIVE = C:\Users\Jordan\OneDrive
-# makefile
-CURDIR := c:/Users/Jordan/Desktop/Program_Shit/Game-Based/main_files
 # environment
 APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
-# automatic
-*D = $(patsubst %/,%,$(patsubst %\,%,$(dir $*)))
 # environment
 PROGRAMFILES = C:\Program Files (x86)
-# environment
-MFLAGS = -pqrRw
 # default
 .SHELLFLAGS := -c
 # environment
 COMMONPROGRAMW6432 = C:\Program Files\Common Files
-# automatic
-+D = $(patsubst %/,%,$(patsubst %\,%,$(dir $+)))
-# makefile (from 'Makefile', line 1)
-MAKEFILE_LIST := Makefile
-# automatic
-@F = $(notdir $@)
 # environment
-VSCODE_PID = 15428
-# automatic
-?D = $(patsubst %/,%,$(patsubst %\,%,$(dir $?)))
-# automatic
-*F = $(notdir $*)
-# automatic
-<D = $(patsubst %/,%,$(patsubst %\,%,$(dir $<)))
+VSCODE_PID = 6192
 # environment
 VSCODE_NLS_CONFIG = {"locale":"en-us","availableLanguages":{},"_languagePackSupport":true}
 # environment
 ONEDRIVECONSUMER = C:\Users\Jordan\OneDrive
-# default
-MAKE_HOST := Windows32
 # environment
 PROGRAMDATA = C:\ProgramData
-# default
-SHELL := C:/cygwin64/bin/sh.exe
 # environment
 HOMEPATH = \Users\Jordan
 # default
@@ -121,18 +88,12 @@ DRIVERDATA = C:\Windows\System32\Drivers\DriverData
 COMSPEC = C:\WINDOWS\system32\cmd.exe
 # environment
 WINDIR = C:\WINDOWS
-# environment
-MAKELEVEL := 0
 # default
 MAKE = $(MAKE_COMMAND)
 # environment
 PATH = C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\ProgramData\chocolatey\bin;A:\NodeJS\;C:\Program Files\Git\cmd;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin;C:\Program Files\dotnet\;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\lib\make\tools\install\bin;C:\mingw64\bin;C:\Program Files (x86)\GnuWin32\bin;C:\cygwin64\bin;C:\Program Files\CMake\bin;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Users\Jordan\AppData\Local\Programs\Python\Python38\Scripts\;C:\Users\Jordan\AppData\Local\Programs\Python\Python38\;C:\Users\Jordan\AppData\Local\Microsoft\WindowsApps;C:\Users\Jordan\AppData\Roaming\cabal\bin;C:\ProgramData\chocolatey\lib\ghc\tools\ghc-8.10.2\bin;C:\tools\msys64;C:\Users\Jordan\AppData\Local\GitHubDesktop\bin;C:\Program Files\Graphviz\bin;C:\Users\Jordan\AppData\Roaming\npm;C:\Users\Jordan\.dotnet\tools;C:\Users\Jordan\AppData\Local\Programs\Microsoft VS Code\bin
 # environment
 COMPUTERNAME = DESKTOP-5S636E9
-# default
-MAKEFILES := 
-# automatic
-^F = $(notdir $^)
 # environment
 _MSYS2_PREFIX = x86_64
 # environment
@@ -145,26 +106,18 @@ LOGONSERVER = \\DESKTOP-5S636E9
 USERNAME = Jordan
 # environment
 COMMONPROGRAMFILES = C:\Program Files (x86)\Common Files
-# automatic
-?F = $(notdir $?)
 # environment
 PROGRAMW6432 = C:\Program Files
 # environment
 PATHEXT = .COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC
-# automatic
-+F = $(notdir $+)
 # environment
 ORIGINAL_XDG_CURRENT_DESKTOP = undefined
 # environment
 USERDOMAIN = DESKTOP-5S636E9
-# 'override' directive
+# environment
 GNUMAKEFLAGS := 
 # environment
 OS = Windows_NT
-# makefile
-.DEFAULT_GOAL := all
-# default
-MAKE_VERSION := 4.3
 # environment
 PROGRAMFILES(X86) = C:\Program Files (x86)
 # environment
@@ -191,10 +144,6 @@ TEMP = C:\Users\Jordan\AppData\Local\Temp
 VSCODE_IPC_HOOK = \\.\pipe\caf4b82a2d712fee4f1e03c8ed8b71fb-1.71.0-main-sock
 # default
 .RECIPEPREFIX := 
-# automatic
-<F = $(notdir $<)
-# default
-SUFFIXES := 
 # environment
 ALLUSERSPROFILE = C:\ProgramData
 # environment
@@ -208,7 +157,7 @@ CHOCOLATEYTOOLSLOCATION = C:\tools
 # environment
 PROCESSOR_IDENTIFIER = AMD64 Family 23 Model 113 Stepping 0, AuthenticAMD
 # variable set hash-table stats:
-# Load=98/1024=10%, Rehash=0, Collisions=9/127=7%
+# Load=72/1024=7%, Rehash=0, Collisions=4/76=5%
 
 # Pattern-specific Variable Values
 
@@ -216,9 +165,8 @@ PROCESSOR_IDENTIFIER = AMD64 Family 23 Model 113 Stepping 0, AuthenticAMD
 
 # Directories
 
-# . (key c:/Users/Jordan/Desktop/Program_Shit/Game-Based/main_files, mtime 1662561523): 12 files, no impossibilities.
 
-# 12 files, no impossibilities in 1 directories.
+# No files, no impossibilities in 0 directories.
 
 # Implicit Rules
 
@@ -227,67 +175,26 @@ PROCESSOR_IDENTIFIER = AMD64 Family 23 Model 113 Stepping 0, AuthenticAMD
 # Files
 
 # Not a target:
-Makefile:
-#  Implicit rule search has been done.
-#  Last modified 2022-09-05 13:17:39
-#  File has been updated.
-#  Successfully updated.
-
-# Not a target:
-.DEFAULT:
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
-
 all:
 #  Command line target.
-#  Implicit rule search has not been done.
-#  Implicit/static pattern stem: ''
-#  File does not exist.
-#  File has been updated.
-#  Needs to be updated (-q is set).
-# automatic
-# @ := all
-# automatic
-# * := 
-# automatic
-# < := 
-# automatic
-# + := 
-# automatic
-# % := 
-# automatic
-# ^ := 
-# automatic
-# ? := 
-# automatic
-# | := 
-# variable set hash-table stats:
-# Load=8/32=25%, Rehash=0, Collisions=1/11=9%
-#  recipe to execute (from 'Makefile', line 2):
-	g++ -I../src/Include -L../src/lib -o main main.cpp cpu.cpp bus.cpp cart.cpp ppu.cpp timer.cpp -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf
-
-# Not a target:
-.SUFFIXES:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
 
 # files hash-table stats:
-# Load=4 
-/1024=0%, Rehash=0, Collisions=0/16=0%
+# Load=1/1024=0%, Rehash=0, Collisions=0/1=0%
 # VPATH Search Paths
 
 # No 'vpath' search paths.
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 16 / storage = 179 B / avg = 11 B
-# current buf: size = 8174 B / used = 179 B / count = 16 / avg = 11 B
+# strcache buffers: 1 (0) / strings = 2 / storage = 63 B / avg = 31 B
+# current buf: size = 8174 B / used = 63 B / count = 2 / avg = 31 B
 
-# strcache performance: lookups = 23 / hit rate = 30%
+# strcache performance: lookups = 3 / hit rate = 33%
 # hash-table stats:
-# Load=16/8192=0%, Rehash=0, Collisions=0/23=0%
-# Finished Make data base on Wed Sep 07 11:45:58 2022
+# Load=2/8192=0%, Rehash=0, Collisions=0/3=0%
+# Finished Make data base on Mon Sep 12 09:00:37 2022
 
  

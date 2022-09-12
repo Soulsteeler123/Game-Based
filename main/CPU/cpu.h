@@ -1,5 +1,5 @@
 #pragma once
-#include "reusable.h"
+#include "../reusable.h"
 
 //Initalizes the CPU
 void cpu_init();

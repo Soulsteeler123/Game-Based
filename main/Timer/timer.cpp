@@ -1,4 +1,4 @@
-#include "../header_files/timer.h"
+#include "timer.h"
 
 void timer_init() {
 
