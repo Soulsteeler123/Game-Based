@@ -32,29 +32,35 @@ int emu_main(int argc, char* argv[]) {
 
     std::cout << "Rom Cartridge loaded..." << std::endl;
 
-    //Initializes 
+    //Initializes SDL methods
     SDL_Init(SDL_INIT_VIDEO);
     std::cout << "SDL Initialized..." << std::endl;
     TTF_Init();
     std::cout << "TTF Initialized..." << std::endl;
 
+    //Initializes cpu
     cpu_init();
 
+    //Auto sets values for the context
     context.running = true;
     context.paused = false;
     context.ticks = 0;
 
+    //Loops while the rom is running
     while(context.running) {
+        //Delays program if the context is paused
         if(context.paused) {
             delay(10);
             continue;
         }
 
+        //Error in case cpu is not able to step
         if(!cpu_step()) {
             std::cout << "Error, CPU stopped..." << std::endl;
             return -1;
         }
 
+        //Increaments cpu ticks for each cycle
         context.ticks++;
     }
 
@@ -62,9 +68,15 @@ int emu_main(int argc, char* argv[]) {
 }
 
 emu_struct *emu_get_struct() {
+    //Returns address of context
     return &context;
 }
 
 void delay(unsigned int ms) {
+    //Will delay the program window
     SDL_Delay(ms);
+}
+
+void cycles(int cycle) {
+    //Not yet implemented
 }

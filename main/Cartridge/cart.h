@@ -1,7 +1,7 @@
 #pragma once
 #include "../reusable.h"
 
-typedef struct {
+struct rom_header{
     //4 byte entry memory
     unsigned char entry[4];
 
@@ -40,7 +40,12 @@ typedef struct {
 
     //Sum of all bytes of the cartridge rom
     unsigned short global_checksum;
-} rom_header;
+};
 
 //Loads cartridge
 bool cart_load (std::string cart);
+
+//Reads from the cartridge
+unsigned char cart_read(unsigned short address);
+//Writes to the carridge
+void cart_write(unsigned short address, unsigned char value);

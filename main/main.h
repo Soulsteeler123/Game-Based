@@ -12,3 +12,5 @@ typedef struct {
 int emu_main(int argc, char *argv[]);
 //Returns address of the context structure
 emu_struct *emu_get_struct();
+//Increaments the cycles
+void cycles(int cycle);

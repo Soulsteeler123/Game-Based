@@ -1,14 +1,16 @@
 #include "cart.h"
 
-typedef struct {
+//Defines the members stored for the cartridge(ROM)
+struct  cart_struct {
     std::string filename;
-    long rom_size;
+    unsigned long rom_size;
     char* rom_data;
     rom_header *header;
-} cart_struct;
+};
 
 static cart_struct context;
 
+//Lookup table based on type of rom defined
 static std::string rom_types[] = {
     "ROM ONLY",
     "MBC1",
@@ -47,6 +49,7 @@ static std::string rom_types[] = {
     "MBC7+SENSOR+RUMBLE+RAM+BATTERY",
 };
 
+//Lookup table for all different licensing codes and their corresponding value in hex
 static const std::map<int, std::string> lic_codes {
     {0x00, "None"},
     {0x01, "Nintendo R&D1"},
@@ -111,19 +114,21 @@ static const std::map<int, std::string> lic_codes {
     {0xA4, "Konami (Yu-Gi-Oh!)"}
     };
 
+//Returns licensing code of current rom assuming value is valid
 std::string cart_lic_name() {
     if(context.header->new_lic_code <= 0xA4)
         return lic_codes.at(context.header->lic_code);
     return "Unknown";
 }
 
+//Returns rom type of current rom assuming value is valid
 std::string rom_type() {
     if(context.header->type <= 0x22)
         return rom_types[context.header->type];
     return "Unknown";
 }
 
-
+//Determines if cartridge is readable
 bool cart_load (std::string cart) {
     context.filename = cart;
     std::ifstream file(cart, std::ios::in | std::ios::binary | std::ios::ate);
@@ -134,6 +139,7 @@ bool cart_load (std::string cart) {
     
     std::cout << "Opening: " << cart <<  "...\nSUCCESS" << std::endl;
     
+    //Reads header information from rom and auto assigns into context due to total size of context
     context.rom_size = (unsigned long)file.tellg();
     file.seekg(0, std::ios::beg);
     context.rom_data = new char[context.rom_size];
@@ -141,21 +147,34 @@ bool cart_load (std::string cart) {
     file.close();
     context.header = (rom_header *)(context.rom_data + 0x100);
 
+    //Prints out values to ensure information is correct
     std::cout << "Cartridge loaded" << std::endl;
     std::cout << "  Title: " << context.header->title << std::endl;
-    std::cout << "  Type: "  << context.header->type << "(" << rom_type() << ")" << std::endl;
-    std::cout << "  ROM Size: " << (32 << context.header->rom_size) << " KB" << std::endl;
-    std::cout << "  Ram Size: "  << context.header->ram_size << std::endl;
-    std::cout << "  LIC Code: "  << context.header->lic_code << "(" << cart_lic_name() << ")" << std::endl;
-    std::cout << "  Rom Version: "  << context.header->version << std::endl;
+    std::cout << "  Type: "  << std::setfill('0') << std::setw(2) << std::hex << (int)context.header->type << "(" << rom_type() << ")" << std::endl;
+    std::cout << "  ROM Size: " << std::dec << (32 << context.header->rom_size) << " KB" << std::endl;
+    std::cout << "  Ram Size: "  << std::setfill('0') << std::setw(2) << std::hex << (int)context.header->ram_size << std::endl;
+    std::cout << "  LIC Code: "  << std::setfill('0') << std::setw(2) << std::hex << (int)context.header->lic_code << "(" << cart_lic_name() << ")" << std::endl;
+    std::cout << "  Rom Version: "  << std::setfill('0') << std::setw(2) << std::hex << (int)context.header->version << std::endl;
 
+    //Preforms checksum to assure rom is valid
     unsigned short x = 0;
     for(unsigned short i = 0x0134; i <= 0x014C; i++)
         x = x - context.rom_data[i] - 1;
-    std::cout << "  Checksum: " << std::hex << x;
+    std::cout << "  Checksum: " << std::setfill('0') << std::setw(2) << std::hex << (int)x;
     if(x & 0xFF)
         std::cout << " PASSED" << std::endl;
     else
         std::cout << " FAILED" << std::endl;
     return true;
+}
+
+//Returns rom data given an address
+unsigned char cart_read(unsigned short address) {
+    //ROM ONLY currently
+    return context.rom_data[address];
+}
+
+//not yet implemented
+void cart_write(unsigned short address, unsigned char value) {
+    NOT_IMPL
 }
