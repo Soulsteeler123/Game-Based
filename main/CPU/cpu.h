@@ -2,6 +2,10 @@
 #include "../reusable.h"
 //Causes get_instruction to be overloaded for some reason?
 #include "../instructions/instr.h"
+
+#define CPU_ZFLAG BIT(context->regs.f, 7)
+#define CPU_CFLAG BIT(context->regs.f, 4)
+
 //Defines all registers
 struct registers {
     unsigned char a;
@@ -26,6 +30,7 @@ struct cpu_context {
     bool stopped;
     bool step;
     bool dest_is_mem;
+    bool master_enabled;
 };
 
 //Initalizes the CPU

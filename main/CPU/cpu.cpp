@@ -1,11 +1,11 @@
-#include "cpu.h"
+#include "processors.h"
 #include "../BUS/bus.h"
-#include "../main.h"
 
 cpu_context context;
 
 void cpu_init() {
     context.regs.pc = 0x100;
+    context.regs.a = 0x01;
     context.stopped = false;
 }
 
@@ -36,15 +36,27 @@ void get_instr() {
 }
 
 void exec() {
-    printf("\tNot yet executing\n");
+
+    switch(context.inst.type) {
+        case IN_NONE: proc_none(&context); break;
+        case IN_NOP: proc_nop(&context); break;
+        case IN_LD: proc_ld(&context); break;
+        case IN_JP: proc_jp(&context); break;
+        case IN_DI: proc_di(&context); break;
+        case IN_XOR: proc_xor(&context); break;
+        default: NOT_IMPL;
+    }
 }
 
 bool cpu_step() {
     if(!context.stopped) {
-        std::cout << "Executing instruction: " << std::setfill('0') << std::setw(2) << std::hex << (int)context.opcode;
-        std::cout << "\tPC: " << std::setfill('0') << std::setw(4) << std::hex << (int)context.regs.pc << std::endl;
+        unsigned short temp_pc = context.regs.pc;
         get_instr();
         get_data();
+        std::cout << "PC: " << std::setfill('0') << std::setw(4) << std::hex << (int)temp_pc << "\t" << get_name(context.inst.type);
+        std::cout << "\tExecuting instruction: " << std::setfill('0') << std::setw(2) << std::hex << (int)context.opcode;
+        std::cout << "\tNext two opcodes: (" << std::setfill('0') << std::setw(2) << std::hex << (int)bus_read(temp_pc + 1) << ", " << std::setw(2) << (int)bus_read(temp_pc + 2) << ").";
+        std::cout << "\tRegister A: " << std::setfill('0') << std::setw(2) << std::hex << (int)context.regs.a << " Register B: " << std::setw(2) << (int)context.regs.b << " Register C: " <<  std::setw(2) << (int)context.regs.c << std::endl;
         exec();
     }
     return true;
