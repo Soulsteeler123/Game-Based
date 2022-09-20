@@ -7,9 +7,8 @@ make: *** c:\Users\Jordan\Desktop\Program_Shit\Game-Based\main_files: No such fi
 # License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
- 
 
-# Make data base, printed on Tue Sep 20 11:11:52 2022
+# Make data base, printed on Tue Sep 20 11:13:21 2022
 
 # Variables
 
@@ -30,8 +29,7 @@ VBOX_MSI_INSTALL_PATH = C:\Program Files\Oracle\VirtualBox\
 # environment
 LOCALAPPDATA = C:\Users\Jordan\AppData\Local
 # environment
-VSCODE_CWD  
-= C:\Users\Jordan\AppData\Local\Programs\Microsoft VS Code
+VSCODE_CWD = C:\Users\Jordan\AppData\Local\Programs\Microsoft VS Code
 # environment
 CHOCOLATEYINSTALL = C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin
 # environment
@@ -43,7 +41,7 @@ PSMODULEPATH = C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\Wi
 # default
 MAKE_COMMAND := make.exe
 # environment
-CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_5416_SZDLMKURPNXSCWXF
+CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_20532_XTOWOGGLQCRSJRXH
 # environment
 VS160COMCOMNTOOLS = C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools\
 # environment
@@ -73,7 +71,7 @@ PROGRAMFILES = C:\Program Files (x86)
 # environment
 COMMONPROGRAMW6432 = C:\Program Files\Common Files
 # environment
-VSCODE_PID = 5416
+VSCODE_PID = 20532
 # environment
 VSCODE_NLS_CONFIG = {"locale":"en-us","availableLanguages":{},"_languagePackSupport":true}
 # environment
@@ -187,8 +185,7 @@ all:
 # Load=1/1024=0%, Rehash=0, Collisions=0/1=0%
 # VPATH Search Paths
 
-# No 'v 
-path' search paths.
+# No 'vpath' search paths.
 
 # No general ('VPATH' variable) search path.
 
@@ -198,6 +195,6 @@ path' search paths.
 # strcache performance: lookups = 3 / hit rate = 33%
 # hash-table stats:
 # Load=2/8192=0%, Rehash=0, Collisions=0/3=0%
-# Finished Make data base on Tue Sep 20 11:11:52 2022
+# Finished Make data base on Tue Sep 20 11:13:21 2022
 
  

@@ -1,6 +1,5 @@
 #pragma once
 #include "../reusable.h"
-//Causes get_instruction to be overloaded for some reason?
 #include "../instructions/instr.h"
 
 #define CPU_ZFLAG BIT(context->regs.f, 7)
@@ -47,3 +46,5 @@ void exec();
 unsigned short read_reg(reg_type reg);
 //Reverses bytes of register
 unsigned short rev_reg(unsigned short reg);
+
+void set_reg(reg_type reg, unsigned short value);
