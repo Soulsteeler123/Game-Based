@@ -141,6 +141,7 @@ void exec() {
         case IN_LD: proc_ld(&context); break;
         case IN_JP: proc_jp(&context); break;
         case IN_DI: proc_di(&context); break;
+        case IN_LDH: proc_ldh(&context); break;
         case IN_XOR: proc_xor(&context); break;
         default: NOT_IMPL;
     }
@@ -154,7 +155,9 @@ bool cpu_step() {
         std::cout << "PC: " << std::setfill('0') << std::setw(4) << std::hex << (int)temp_pc << "\t" << get_name(context.inst.type);
         std::cout << "\tExecuting instruction: " << std::setfill('0') << std::setw(2) << std::hex << (int)context.opcode;
         std::cout << "\tNext two opcodes: (" << std::setfill('0') << std::setw(2) << std::hex << (int)bus_read(temp_pc + 1) << ", " << std::setw(2) << (int)bus_read(temp_pc + 2) << ").";
-        std::cout << "\tRegister A: " << std::setfill('0') << std::setw(2) << std::hex << (int)context.regs.a << " Register B: " << std::setw(2) << (int)context.regs.b << " Register C: " <<  std::setw(2) << (int)context.regs.c << std::endl;
+        std::cout << "\tRegister A: " << std::setfill('0') << std::setw(2) << std::hex << (int)context.regs.a << " Register BC: " << std::setw(2) << (int)context.regs.b << std::setw(2) << (int)context.regs.c 
+        << " Register DE: " << std::setw(2) << (int)context.regs.d << std::setw(2) << (int)context.regs.e << " Register HL: " << std::setw(2) << (int)context.regs.h << 
+        std::setw(2) << (int)context.regs.l << std::endl;
         exec();
     }
     return true;
@@ -197,15 +200,20 @@ void set_reg(reg_type reg, unsigned short value) {
         case RT_H: context.regs.h = value & 0xFF; break;
         case RT_L: context.regs.l = value & 0xFF; break;
 
-
-        //Could be a cause of later issue with casting to unsigned short...
-        case RT_AF: context.regs.a = rev_reg(value); break;
-        case RT_BC: context.regs.b = rev_reg(value); break;
-        case RT_DE: context.regs.d = rev_reg(value); break;
-        case RT_HL: context.regs.h = rev_reg(value); break;
+        case RT_AF: *((unsigned short *)&context.regs.a) = rev_reg(value); break;
+        case RT_BC: *((unsigned short *)&context.regs.b) = rev_reg(value); break;
+        case RT_DE: *((unsigned short *)&context.regs.d) = rev_reg(value); break;
+        case RT_HL: *((unsigned short *)&context.regs.h) = rev_reg(value); break;
 
         case RT_PC: context.regs.pc = value;
         case RT_SP: context.regs.sp = value;
         default: break;
     }
+}
+
+unsigned char get_ie_reg() {
+    return context.ie_reg;
+}
+void set_ie_reg(unsigned char value) {
+    context.ie_reg = value;
 }

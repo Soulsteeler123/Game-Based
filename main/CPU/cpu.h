@@ -25,6 +25,7 @@ struct cpu_context {
     unsigned short data;
     unsigned short mem;
     unsigned char opcode;
+    unsigned char ie_reg;
     instruction inst;
     bool stopped;
     bool step;
@@ -48,3 +49,6 @@ unsigned short read_reg(reg_type reg);
 unsigned short rev_reg(unsigned short reg);
 
 void set_reg(reg_type reg, unsigned short value);
+
+unsigned char get_ie_reg();
+void set_ie_reg(unsigned char value);

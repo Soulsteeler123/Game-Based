@@ -70,6 +70,15 @@ static void proc_di(cpu_context *context) {
     context->master_enabled = false;
 }
 
+static void proc_ldh(cpu_context *context) {
+    if(context->inst.reg_1 == RT_A) 
+        set_reg(context->inst.reg_1, bus_read(0xFF00 | context->data));
+    else
+        bus_write(0xFF00 | context->data, context->regs.a);
+    cycles(1);    
+    
+}
+
 static void proc_xor(cpu_context *context) {
     context->regs.a ^= context->data & 0xFF;
     cpu_flags(context, context->regs.a, 0, 0, 0);
