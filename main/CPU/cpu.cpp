@@ -140,9 +140,16 @@ void exec() {
         case IN_NOP: proc_nop(&context); break;
         case IN_LD: proc_ld(&context); break;
         case IN_JP: proc_jp(&context); break;
+        case IN_CALL: proc_call(&context); break;
+        case IN_RST: proc_rst(&context); break;
+        case IN_RET: proc_ret(&context); break;
+        case IN_RETI: proc_reti(&context); break;
+        case IN_JR: proc_jr(&context); break;
         case IN_DI: proc_di(&context); break;
         case IN_LDH: proc_ldh(&context); break;
         case IN_XOR: proc_xor(&context); break;
+        case IN_PUSH: proc_push(&context); break;
+        case IN_POP: proc_pop(&context); break;
         default: NOT_IMPL;
     }
 }
@@ -214,6 +221,25 @@ void set_reg(reg_type reg, unsigned short value) {
 unsigned char get_ie_reg() {
     return context.ie_reg;
 }
+
 void set_ie_reg(unsigned char value) {
     context.ie_reg = value;
+}
+
+void stack_push(unsigned char value) {
+    context.regs.sp--;
+    bus_write(context.regs.sp, value);
+}
+
+void stack_push16(unsigned short value) {
+    stack_push((value >> 8) & 0xFF);
+    stack_push(value & 0xFF);
+}
+
+unsigned char stack_pop() {
+    return(bus_read(context.regs.sp++));
+}
+
+unsigned short stack_pop16() {
+    return((stack_pop() << 8) | stack_pop());
 }

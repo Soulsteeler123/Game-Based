@@ -52,3 +52,11 @@ void set_reg(reg_type reg, unsigned short value);
 
 unsigned char get_ie_reg();
 void set_ie_reg(unsigned char value);
+
+registers get_regs();
+
+void stack_push(unsigned char value);
+void stack_push16(unsigned short value);
+
+unsigned char stack_pop();
+unsigned short stack_pop16();

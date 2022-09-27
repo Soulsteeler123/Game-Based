@@ -59,11 +59,48 @@ static void proc_ld(cpu_context *context) {
         set_reg(context->inst.reg_1, context->data);
 }
 
-static void proc_jp(cpu_context *context) {
+static void proc_goto(cpu_context *context, unsigned short address, bool push) {
     if(condition(context)) {
-        context->regs.pc = context->data;
+        if(push) {
+            stack_push16(context->regs.pc);
+            cycles(2);
+        }
+        context->regs.pc = address;
         cycles(1);
     }
+}
+
+static void proc_jp(cpu_context *context) {
+    proc_goto(context, context->data, false);
+}
+
+static void proc_call(cpu_context *context) {
+    proc_goto(context, context->data, true);
+}
+
+static void proc_rst(cpu_context *context) {
+    proc_goto(context, context->inst.param, true);
+}
+
+static void proc_ret(cpu_context *context) {
+    if(context->inst.cond != CT_NONE)
+        cycles(1);
+    if(condition(context)) {
+        unsigned short lo = stack_pop();
+        unsigned short hi = stack_pop();
+        context->regs.pc = ((hi << 8) | lo);
+        cycles(3);
+    }
+}
+
+static void proc_reti(cpu_context *context) {
+    context->master_enabled = true;
+    proc_ret(context);
+}
+
+static void proc_jr(cpu_context *context) {
+    char value = (char)(context->data & 0xFF);
+    proc_goto(context, (unsigned short)(context->regs.pc + value), false);
 }
 
 static void proc_di(cpu_context *context) {
@@ -75,6 +112,7 @@ static void proc_ldh(cpu_context *context) {
         set_reg(context->inst.reg_1, bus_read(0xFF00 | context->data));
     else
         bus_write(0xFF00 | context->data, context->regs.a);
+        
     cycles(1);    
     
 }
@@ -82,4 +120,22 @@ static void proc_ldh(cpu_context *context) {
 static void proc_xor(cpu_context *context) {
     context->regs.a ^= context->data & 0xFF;
     cpu_flags(context, context->regs.a, 0, 0, 0);
+}
+
+static void proc_pop(cpu_context *context) {
+    unsigned short lo = stack_pop();
+    unsigned short hi = stack_pop();
+    if(context->inst.reg_1 == RT_AF) 
+        set_reg(context->inst.reg_1, ((hi << 8) | lo) & 0xFFF0);
+    else
+        set_reg(context->inst.reg_1, ((hi << 8) | lo));
+    cycles(2);
+}
+
+static void proc_push(cpu_context *context) {
+    //hi
+    stack_push((read_reg(context->inst.reg_1) >> 8) & 0xFF);
+    //lo
+    stack_push((read_reg(context->inst.reg_1)) & 0xFF);
+    cycles(3);
 }

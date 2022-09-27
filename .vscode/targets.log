@@ -7,9 +7,8 @@ make: *** c:\Users\Jordan\Desktop\Program_Shit\Game-Based\main_files: No such fi
 # License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
- 
 
-# Make data base, printed on Mon Sep 26 10:44:47 2022
+# Make data base, printed on Tue Sep 27 10:59:53 2022
 
 # Variables
 
@@ -42,10 +41,9 @@ PSMODULEPATH = C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\Wi
 # default
 MAKE_COMMAND := make.exe
 # environment
-CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_9108_RFLAXUADJRCFCESY
+CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_8136_ZDNYJWTQQOYJJQJP
 # environment
-VS160COMCO 
-MNTOOLS = C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools\
+VS160COMCOMNTOOLS = C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools\
 # environment
 FPS_BROWSER_USER_PROFILE_STRING = Default
 # environment
@@ -73,7 +71,7 @@ PROGRAMFILES = C:\Program Files (x86)
 # environment
 COMMONPROGRAMW6432 = C:\Program Files\Common Files
 # environment
-VSCODE_PID = 9108
+VSCODE_PID = 8136
 # environment
 VSCODE_NLS_CONFIG = {"locale":"en-us","availableLanguages":{},"_languagePackSupport":true}
 # environment
@@ -197,6 +195,6 @@ all:
 # strcache performance: lookups = 3 / hit rate = 33%
 # hash-table stats:
 # Load=2/8192=0%, Rehash=0, Collisions=0/3=0%
-# Finished Make data base on Mon Sep 26 10:44:47 2022
+# Finished Make data base on Tue Sep 27 10:59:53 2022
 
  

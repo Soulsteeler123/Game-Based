@@ -1,4 +1,4 @@
-make.exe -C c:\Users\Jordan\Desktop\Program_Shit\Game-Based\main_files --dry-run --keep-going --print-directory
+make.exe -C c:\Users\Jordan\Desktop\Program_Shit\Game-Based\main_files --dry-run --always-make --keep-going --print-directory
 make: Entering directory 'c:/Users/Jordan/Desktop/Program_Shit/Game-Based'
 make: Leaving directory 'c:/Users/Jordan/Desktop/Program_Shit/Game-Based'
  
