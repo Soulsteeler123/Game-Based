@@ -2,6 +2,7 @@
 #include "../reusable.h"
 #include "../instructions/instr.h"
 
+//Short cuts to deal with z and c flag bit sets
 #define CPU_ZFLAG BIT(context->regs.f, 7)
 #define CPU_CFLAG BIT(context->regs.f, 4)
 
@@ -48,15 +49,20 @@ unsigned short read_reg(reg_type reg);
 //Reverses bytes of register
 unsigned short rev_reg(unsigned short reg);
 
+//Sets the register to a given 16 bit value
 void set_reg(reg_type reg, unsigned short value);
 
+//Returns 8 bit value in the ie register
 unsigned char get_ie_reg();
+//Sets the ie register to an 8 bit value
 void set_ie_reg(unsigned char value);
 
-registers get_regs();
-
+//Pushs values for the bus and pushes it on top of the "stack"
 void stack_push(unsigned char value);
+//Pushs values for the bus and pushes it on top of the "stack" (16 bit)
 void stack_push16(unsigned short value);
 
+//Pops top value of the "stack"
 unsigned char stack_pop();
+//Pops top value of the "stack" (16 bit)
 unsigned short stack_pop16();

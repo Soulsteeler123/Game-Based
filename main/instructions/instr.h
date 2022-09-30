@@ -113,5 +113,7 @@ struct instruction {
     unsigned char param;
 };
 
+//Returns instruction based on opcode
 instruction get_instruction(unsigned char opcode);
+//Returns name of instruction type
 std::string get_name(in_type type);
