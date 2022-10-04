@@ -48,9 +48,11 @@ void exec();
 unsigned short read_reg(reg_type reg);
 //Reverses bytes of register
 unsigned short rev_reg(unsigned short reg);
-
 //Sets the register to a given 16 bit value
 void set_reg(reg_type reg, unsigned short value);
+
+unsigned char read_reg8(reg_type reg);
+void set_reg8(reg_type reg, unsigned char value);
 
 //Returns 8 bit value in the ie register
 unsigned char get_ie_reg();

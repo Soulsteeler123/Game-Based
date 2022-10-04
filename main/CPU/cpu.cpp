@@ -192,6 +192,16 @@ void exec() {
         case IN_XOR: proc_xor(&context); break;
         case IN_PUSH: proc_push(&context); break;
         case IN_POP: proc_pop(&context); break;
+        case IN_INC: proc_inc(&context); break;
+        case IN_DEC: proc_dec(&context); break;
+        case IN_ADD: proc_add(&context); break;
+        case IN_ADC: proc_adc(&context); break;
+        case IN_SUB: proc_sub(&context); break;
+        case IN_SBC: proc_sbc(&context); break;
+        case IN_AND: proc_and(&context); break;
+        case IN_OR: proc_or(&context); break;
+        case IN_CP: proc_cp(&context); break;
+        case IN_CB: proc_cb(&context); break;
         default: NOT_IMPL;
     }
 }
@@ -205,7 +215,8 @@ bool cpu_step() {
         //Gets the data
         get_data();
         //Debug information
-        std::cout << "PC: " << std::setfill('0') << std::setw(4) << std::hex << (int)temp_pc << "\t" << get_name(context.inst.type);
+        std::cout << "Ticks: " << std::setfill('0') << std::setw(8) << emu_get_struct()->ticks;
+        std::cout << "\tPC: " << std::setfill('0') << std::setw(4) << std::hex << (int)temp_pc << "\t" << get_name(context.inst.type);
         std::cout << "\tExecuting instruction: " << std::setfill('0') << std::setw(2) << std::hex << (int)context.opcode;
         std::cout << "\tNext two opcodes: (" << std::setfill('0') << std::setw(2) << std::hex << (int)bus_read(temp_pc + 1) << ", " << std::setw(2) << (int)bus_read(temp_pc + 2) << ").";
         std::cout << "\tRegister A: " << std::setfill('0') << std::setw(2) << std::hex << (int)context.regs.a << " Register BC: " << std::setw(2) << (int)context.regs.b << std::setw(2) << (int)context.regs.c 
@@ -228,11 +239,17 @@ unsigned short read_reg(reg_type reg) {
         case RT_E: return context.regs.e;
         case RT_H: return context.regs.h;
         case RT_L: return context.regs.l;
-
+        //Might be wrong idk
+        /*
         case RT_AF: return rev_reg((unsigned short)context.regs.a);
         case RT_BC: return rev_reg((unsigned short)context.regs.b);
         case RT_DE: return rev_reg((unsigned short)context.regs.d);
         case RT_HL: return rev_reg((unsigned short)context.regs.h);
+        */
+        case RT_AF: return rev_reg(*(unsigned short *)&context.regs.a);
+        case RT_BC: return rev_reg(*(unsigned short *)&context.regs.b);
+        case RT_DE: return rev_reg(*(unsigned short *)&context.regs.d);
+        case RT_HL: return rev_reg(*(unsigned short *)&context.regs.h);
 
         case RT_PC: return context.regs.pc;
         case RT_SP: return context.regs.sp;
@@ -265,6 +282,36 @@ void set_reg(reg_type reg, unsigned short value) {
         case RT_PC: context.regs.pc = value;
         case RT_SP: context.regs.sp = value;
         default: break;
+    }
+}
+
+unsigned char read_reg8(reg_type reg) {
+    switch(reg) {
+        case RT_A: return context.regs.a;
+        case RT_F: return context.regs.f;
+        case RT_B: return context.regs.b;
+        case RT_C: return context.regs.c;
+        case RT_D: return context.regs.d;
+        case RT_E: return context.regs.e;
+        case RT_H: return context.regs.h;
+        case RT_L: return context.regs.l;
+        case RT_HL: return bus_read(read_reg(RT_HL));
+        default: std::cout << "Error. Invalid reg8." << std::endl; NOT_IMPL
+    }
+}
+
+void set_reg8(reg_type reg, unsigned char value) {
+    switch(reg) {
+        case RT_A: context.regs.a = value & 0xFF; break;
+        case RT_F: context.regs.f = value & 0xFF; break;
+        case RT_B: context.regs.b = value & 0xFF; break;
+        case RT_C: context.regs.c = value & 0xFF; break;
+        case RT_D: context.regs.d = value & 0xFF; break;
+        case RT_E: context.regs.e = value & 0xFF; break;
+        case RT_H: context.regs.h = value & 0xFF; break;
+        case RT_L: context.regs.l = value & 0xFF; break;
+        case RT_HL: bus_write(read_reg(RT_HL), value); break;
+        default: std::cout << "Error. Invalid reg8." << std::endl; NOT_IMPL
     }
 }
 

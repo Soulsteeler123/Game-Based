@@ -176,6 +176,6 @@ unsigned char cart_read(unsigned short address) {
 
 //not yet implemented
 void cart_write(unsigned short address, unsigned char value) {
-    std::cout << "Cart read failure at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
-    NOT_IMPL
+    std::cout << "Cart write failure at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
+    //NOT_IMPL
 }

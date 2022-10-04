@@ -9,7 +9,7 @@ unsigned char bus_read(unsigned short address) {
         return cart_read(address);
     else if(address < 0xA000) {
         //TODO
-        std::cout << "Unsupported bus read at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
+        std::cout << "Unsupported bus read1 at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
         NOT_IMPL
     }
     //Cartridge address
@@ -27,7 +27,7 @@ unsigned char bus_read(unsigned short address) {
     else if(address < 0xFEA0) {
         //0AM
         //TODO
-        std::cout << "Unsupported bus read at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
+        std::cout << "Unsupported bus read2 at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
         NOT_IMPL
     }
     else if(address < 0xFF00) {
@@ -36,7 +36,11 @@ unsigned char bus_read(unsigned short address) {
     }
     else if(address < 0xFF80) {
         //TODO
-        std::cout << "Unsupported bus read at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
+        if(address == 0xFF00) {
+            std::cout << "Unsupported controller input" << std::endl;
+            return 0;
+        }
+        std::cout << "Unsupported bus read3 at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
         NOT_IMPL
     }
     //Indicates need for ie register
@@ -55,7 +59,7 @@ void bus_write(unsigned short address, unsigned char value) {
         cart_write(address, value);
     else if(address < 0xA000) {
         //TODO
-        std::cout << "Unsupported bus read at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
+        std::cout << "Unsupported bus write1 at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
         NOT_IMPL
     }
     //Cartridge address
@@ -72,7 +76,7 @@ void bus_write(unsigned short address, unsigned char value) {
     else if(address < 0xFEA0) {
         //0AM
         //TODO
-        std::cout << "Unsupported bus read at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
+        std::cout << "Unsupported bus write2 at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
         NOT_IMPL
     }
     else if(address < 0xFF00) {
@@ -80,7 +84,7 @@ void bus_write(unsigned short address, unsigned char value) {
     }
     else if(address < 0xFF80) {
         //TODO
-        std::cout << "Unsupported bus read at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
+        std::cout << "Unsupported bus write3 at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
         //NOT_IMPL
     }
     //Indicates need to set ie register to value

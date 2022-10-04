@@ -2,6 +2,24 @@
 #include "../main.h"
 #include "../BUS/bus.h"
 
+reg_type cb_lookup[] = {
+    RT_B,
+    RT_C,
+    RT_D,
+    RT_E,
+    RT_H,
+    RT_L,
+    RT_HL,
+    RT_A
+};
+
+reg_type cb_decode(unsigned char reg) {
+    if(reg > 0b111)
+        return RT_NONE;
+    else
+        return cb_lookup[reg];
+}
+
 //Returns condition of c and z flag
 static bool condition(cpu_context *context) {
     //Automatically sets values of z and c flag
@@ -35,6 +53,10 @@ void cpu_flags(cpu_context *context, char z, char n, char h, char c) {
     }
 }
 
+static bool is_16bit(reg_type reg) {
+    return reg >= RT_AF;
+}
+
 //Hit if an instruction is invalid
 static void proc_none(cpu_context *context) {
     std::cout << "Error. Instruction is invalid." << std::endl;
@@ -50,7 +72,7 @@ static void proc_ld(cpu_context *context) {
     //If a register is memory...
     if(context->dest_is_mem) {
         //if register 2 is a any combination of registers has to increment cycle
-        if(context->inst.reg_2 >= RT_AF) {
+        if(is_16bit(context->inst.reg_2)) {
             cycles(1);
             //Writes to bus (16 bit)
             bus_write16(context->mem, context->data);
@@ -157,7 +179,7 @@ static void proc_xor(cpu_context *context) {
     //XOR's register a with the data anded with FF
     context->regs.a ^= context->data & 0xFF;
     //Sets the flags with the new register a
-    cpu_flags(context, context->regs.a, 0, 0, 0);
+    cpu_flags(context, context->regs.a == 0, 0, 0, 0);
 }
 
 static void proc_pop(cpu_context *context) {
@@ -180,4 +202,217 @@ static void proc_push(cpu_context *context) {
     //pushes the low value of register 1
     stack_push((read_reg(context->inst.reg_1)) & 0xFF);
     cycles(3);
+}
+
+static void proc_inc(cpu_context *context) {
+    unsigned short value = read_reg(context->inst.reg_1) + 1;
+    if(is_16bit(context->inst.reg_1))
+        cycles(1);
+    if(context->inst.reg_1 == RT_HL && context->inst.mode == AM_MR) {
+        value = bus_read(read_reg(RT_HL)) + 1;
+        value &= 0xFF;
+        bus_write(read_reg(RT_HL), value);
+    }
+    else {
+        set_reg(context->inst.reg_1, value);
+        value = read_reg(context->inst.reg_1);
+    }
+
+    //If bottom two bits are not set
+    if((context->opcode & 0x03) != 0x03) 
+        cpu_flags(context, value == 0, 0, (value & 0x0F) == 0, -1);
+    
+}
+
+static void proc_dec(cpu_context *context) {
+    unsigned short value = read_reg(context->inst.reg_1) - 1;
+
+    if(is_16bit(context->inst.reg_1))
+        cycles(1);
+    if(context->inst.reg_1 == RT_HL && context->inst.mode == AM_MR) {
+        value = bus_read(read_reg(RT_HL)) - 1;
+        bus_write(read_reg(RT_HL), value);
+    }
+    else {
+        set_reg(context->inst.reg_1, value);
+        value = read_reg(context->inst.reg_1);
+    }
+
+    //If bottom two bits are not set
+    if((context->opcode & 0x0B) != 0x0B) 
+        cpu_flags(context, value == 0, 1, (value & 0x0F) == 0x0F, -1);
+}
+
+static void proc_add(cpu_context *context) {
+    unsigned int value = read_reg(context->inst.reg_1) + context->data;
+    bool is16 = is_16bit(context->inst.reg_1);
+    if(is16)
+        cycles(1);
+    
+    if(context->inst.reg_1 == RT_SP) 
+        value = read_reg(context->inst.reg_1) + (char)context->data;
+    int z, h, c;
+    if(is16) {
+        z = -1;
+        h = (read_reg(context->inst.reg_1) & 0xFFF) + (context->data & 0xFFF) >= 0x1000;
+        c = ((unsigned int)read_reg(context->inst.reg_1)) + ((unsigned int)context->data) >= 0x10000;
+    }
+    else if(context->inst.reg_1 == RT_SP) {
+        z = 0;
+        h = (read_reg(context->inst.reg_1) & 0xF) + (context->data & 0xF) >= 0x10;
+        c = (int)(read_reg(context->inst.reg_1) & 0xFF) + (int)(context->data & 0xFF) >= 0x100;
+    }
+    else {
+        z = (value & 0xFF) == 0;
+        h = (read_reg(context->inst.reg_1) & 0xF) + (context->data & 0xF) >= 0x10;
+        c = (int)(read_reg(context->inst.reg_1) & 0xFF) + (int)(context->data & 0xFF) >= 0x100;
+    }
+
+    set_reg(context->inst.reg_1, value & 0xFFFF);
+    cpu_flags(context, z, 0, h, c);
+}
+
+//Add with carry
+static void proc_adc(cpu_context *context) {
+    unsigned short data = context->data;
+    unsigned short rega = context->regs.a;
+    unsigned short flagc = CPU_CFLAG;
+
+    context->regs.a = (data, rega, flagc) & 0xFF;
+    cpu_flags(context, context->regs.a == 0, 0, (rega & 0xF) + (data & 0xF) + flagc > 0xF, data + rega + flagc > 0xFF);
+}
+
+static void proc_sub(cpu_context *context) {
+    unsigned short value = read_reg(context->inst.reg_1) - context->data;
+    int z = value == 0;
+    int h = ((int)read_reg(context->inst.reg_1) & 0xF) - ((int)context->data & 0xF) < 0;
+    int c = ((int)read_reg(context->inst.reg_1)) - ((int)context->data) < 0;
+
+    set_reg(context->inst.reg_1, value);
+    cpu_flags(context, z, 1, h, c);
+}
+
+//Subtract with carry
+static void proc_sbc(cpu_context *context) {
+    unsigned char value = context->data + CPU_CFLAG;
+    int z = read_reg(context->inst.reg_1) - value == 0;
+    int h = ((int)read_reg(context->inst.reg_1) & 0xF) - ((int)context->data & 0xF) - (int)CPU_CFLAG < 0;
+    int c = ((int)read_reg(context->inst.reg_1)) - ((int)context->data) - (int)CPU_CFLAG < 0;
+
+    set_reg(context->inst.reg_1, read_reg(context->inst.reg_1) - value);
+    cpu_flags(context, z, 1, h, c);
+}
+
+static void proc_and(cpu_context *context) {
+    context->regs.a &= context->data;
+    cpu_flags(context, context->regs.a == 0, 0, 1, 0);
+}
+
+static void proc_or(cpu_context *context) {
+    context->regs.a |= context->data & 0xFF;
+    cpu_flags(context, context->regs.a == 0, 0, 0, 0);
+}
+
+static void proc_cp(cpu_context *context) {
+    int value = (int)context->regs.a - (int)context->data;
+    cpu_flags(context, value == 0, 1, ((int)context->regs.a & 0x0F) - ((int)context->data & 0x0F) < 0, value < 0);
+}
+
+static void proc_cb(cpu_context *context) {
+    unsigned op = context->data;
+    reg_type reg = cb_decode(op & 0b111);
+    unsigned char bit = (op >> 3) & 0b111;
+    unsigned char bitop = (op >> 6) & 0b11;
+    unsigned char regval = read_reg8(reg);
+    if(reg == RT_HL)
+        cycles(2);
+
+    switch(bitop) {
+        case 1:
+            //BIT
+            cpu_flags(context, !(regval & (1 << bit)), 0, 1, -1); return;
+        case 2:
+            //RST
+            set_reg8(reg, (regval &= ~(1 << bit))); return;
+        case 3:
+            //SET
+            set_reg8(reg, (regval |= (1 << bit))); return;
+    }
+
+    bool cflag = CPU_CFLAG;
+
+    switch(bit) {
+        case 0: {
+            //RLC
+            bool setC = false;
+            unsigned char result = (regval << 1) & 0xFF;
+
+            if((regval & (1 << 7)) != 0) {
+                result |= 1;
+                setC = true;
+            }
+
+            set_reg8(reg, result);
+            cpu_flags(context, result == 0, 0, 0, setC);
+            break;
+        }
+        case 1: {
+            //RRC
+            unsigned char old = regval;
+            regval >>= 1;
+            regval |= (old << 7);
+            set_reg8(reg, regval);
+            cpu_flags(context, !regval, 0, 0, old & 1);
+            break;
+        }
+        case 2: {
+            //RL
+            unsigned char old = regval;
+            regval >>= 1;
+            regval |= cflag;
+            set_reg8(reg, regval);
+            cpu_flags(context, !regval, 0, 0, !!(old & 0x80));
+            break;
+        }
+        case 3: {
+            //RR
+            unsigned char old = regval;
+            regval >>= 1;
+            regval |= (cflag << 7);
+            set_reg8(reg, regval);
+            cpu_flags(context, !regval, 0, 0, old & 1);
+            break;
+        }
+        case 4: {
+            //SLA
+            unsigned char old = regval;
+            regval <<= 1;
+
+            set_reg8(reg, regval);
+            cpu_flags(context, !regval, 0, 0, !!(old & 0x80));
+            break;
+        }
+        case 5: {
+            //SRA
+            unsigned char value = (int8_t)regval >> 1;
+            set_reg8(reg, value);
+            cpu_flags(context, !value, 0, 0, regval & 1);
+            break;
+        }
+        case 6: {
+            //SWAP
+            regval = ((regval & 0xF0) >> 4) | ((regval & 0xF) << 4);
+            set_reg8(reg, regval);
+            cpu_flags(context, regval == 0, 0, 0, 0);
+            break;
+        }
+        case 7: {
+            //SRL
+            unsigned char value = regval >> 1;
+            set_reg8(reg, value);
+            cpu_flags(context, !value, 0, 0, regval & 1);
+            break;
+        }
+        default: std::cout << "ERROR. Invalid CB: " << std::setfill('0') << std::setw(2) << std::hex << (int)op << std::endl; NOT_IMPL
+    }
 }
