@@ -137,10 +137,12 @@ static void proc_ret(cpu_context *context) {
     if(condition(context)) {
         //Gets low and high of the stack
         unsigned short lo = stack_pop();
+        cycles(1);
         unsigned short hi = stack_pop();
+        cycles(1);
         //Gets the full value of the original pc count and assigns it
         context->regs.pc = ((hi << 8) | lo);
-        cycles(3);
+        cycles(1);
     }
 }
 
@@ -160,6 +162,11 @@ static void proc_jr(cpu_context *context) {
 static void proc_di(cpu_context *context) {
     //Just enables master
     context->master_enabled = false;
+}
+
+static void proc_ei(cpu_context *context) {
+    //Just enables master
+    context->ime_enabled = true;
 }
 
 static void proc_ldh(cpu_context *context) {
@@ -185,7 +192,9 @@ static void proc_xor(cpu_context *context) {
 static void proc_pop(cpu_context *context) {
     //Gets low and high values from stack
     unsigned short lo = stack_pop();
+    cycles(1);
     unsigned short hi = stack_pop();
+    cycles(1);
     //If register 1 is the AF register
     if(context->inst.reg_1 == RT_AF) 
         //Sets register 1 with the full value anded with FFF
@@ -193,15 +202,16 @@ static void proc_pop(cpu_context *context) {
     else
         //Else just sets register 1 with the full value
         set_reg(context->inst.reg_1, ((hi << 8) | lo));
-    cycles(2);
 }
 
 static void proc_push(cpu_context *context) {
+    cycles(1);
     //pushes the high value of register 1
     stack_push((read_reg(context->inst.reg_1) >> 8) & 0xFF);
+    cycles(1);
     //pushes the low value of register 1
     stack_push((read_reg(context->inst.reg_1)) & 0xFF);
-    cycles(3);
+    cycles(1);
 }
 
 static void proc_inc(cpu_context *context) {
@@ -415,4 +425,77 @@ static void proc_cb(cpu_context *context) {
         }
         default: std::cout << "ERROR. Invalid CB: " << std::setfill('0') << std::setw(2) << std::hex << (int)op << std::endl; NOT_IMPL
     }
+}
+
+static void proc_rlca(cpu_context *context) {
+    unsigned char temp = context->regs.a;
+    bool cset = (temp >> 7) & 1;
+    temp = (temp >> 1) | cset;
+    context->regs.a = temp;
+
+    cpu_flags(context, 0, 0, 0, cset);
+}
+
+static void proc_rrca(cpu_context *context) {
+    unsigned char cset = context->regs.a & 1;
+    context->regs.a >>= 1;
+    context->regs.a |= (cset << 7);
+
+    cpu_flags(context, 0, 0, 0, cset);
+}
+
+static void proc_rla(cpu_context *context) {
+    unsigned char temp = context->regs.a;
+    unsigned char cset = (temp >> 7) & 1; 
+
+    context->regs.a = (temp << 1) | CPU_CFLAG;
+    cpu_flags(context, 0, 0, 0, cset);
+}
+
+static void proc_rra(cpu_context *context) {
+    unsigned char cflag = CPU_CFLAG;
+    unsigned char new_cflag = context->regs.a & 1;
+    context->regs.a >>= 1;
+    context->regs.a |= (cflag << 7);
+
+    cpu_flags(context, 0, 0, 0, new_cflag);
+}
+
+static void proc_stop(cpu_context *context) {
+    std::cout << "Stopping..." << std::endl;
+    NOT_IMPL
+}
+
+static void proc_daa(cpu_context *context) {
+    unsigned char temp = 0;
+    int cflag = 0;
+
+    if(CPU_HFLAG || (!CPU_NFLAG && (context->regs.a & 0xF) > 9))
+        temp = 6;
+    
+    if(CPU_CFLAG || (!CPU_NFLAG && context->regs.a > 0x99)) {
+        temp |= 0x60;
+        cflag = 1;
+    }
+
+    context->regs.a += CPU_NFLAG ? -(temp) : temp;
+
+    cpu_flags(context, context->regs.a == 0, -1, 0, cflag);
+}
+
+static void proc_cpl(cpu_context *context) {
+    context->regs.a = ~context->regs.a;
+    cpu_flags(context, -1, 1, 1, -1);
+}
+
+static void proc_scf(cpu_context *context) {
+    cpu_flags(context, -1, 0, 0, 1);
+}
+
+static void proc_ccf(cpu_context *context) {
+    cpu_flags(context, -1, 0, 0, CPU_CFLAG ^ 1);
+}
+
+static void proc_halt(cpu_context *context) {
+    context->halt = true;
 }

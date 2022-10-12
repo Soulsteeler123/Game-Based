@@ -4,6 +4,8 @@
 
 //Short cuts to deal with z and c flag bit sets
 #define CPU_ZFLAG BIT(context->regs.f, 7)
+#define CPU_NFLAG BIT(context->regs.f, 6)
+#define CPU_HFLAG BIT(context->regs.f, 5)
 #define CPU_CFLAG BIT(context->regs.f, 4)
 
 //Defines all registers
@@ -27,11 +29,21 @@ struct cpu_context {
     unsigned short mem;
     unsigned char opcode;
     unsigned char ie_reg;
+    unsigned char iflags;
     instruction inst;
-    bool stopped;
+    bool halt;
     bool step;
     bool dest_is_mem;
     bool master_enabled;
+    bool ime_enabled;
+};
+
+enum interrupt_type {
+    VBLANK = 1,
+    LCD_STAT = 2,
+    TIMER = 4,
+    SERIAL = 8,
+    JOYPAD = 16
 };
 
 //Initalizes the CPU
@@ -68,3 +80,12 @@ void stack_push16(unsigned short value);
 unsigned char stack_pop();
 //Pops top value of the "stack" (16 bit)
 unsigned short stack_pop16();
+
+//Returns value of interrupt flags
+unsigned char get_iflags();
+
+//Sets value of interrupt flags
+void set_iflags(unsigned char value);
+
+void request_interrupt(interrupt_type type);
+void handle_interrupt();

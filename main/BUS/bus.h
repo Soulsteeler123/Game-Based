@@ -10,3 +10,6 @@ void bus_write(unsigned short address, unsigned char value);
 unsigned short bus_read16(unsigned short address);
 //Writes with 16 bit ram address
 void bus_write16(unsigned short address, unsigned short value);
+
+unsigned char io_read(unsigned short address);
+void io_write(unsigned short address, unsigned char value);

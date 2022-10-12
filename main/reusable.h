@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <map>
+#include <thread>
 
 //Gets bit
 #define BIT(a, n) ((a & (1 << n)) ? 1 : 0)
@@ -18,4 +19,4 @@
 #define NOT_IMPL { std::cout << "Not yet implemented." << std::endl; exit(-1); }
 
 //Delays program when needed
-void delay(uint32_t ms);
+void delay(unsigned int ms);

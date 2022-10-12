@@ -1,14 +1,24 @@
 #include "processors.h"
 #include "../BUS/bus.h"
-
+#include "../debug/debug.h"
+#include "../Timer/timer.h"
 //Current context information for cpu
-cpu_context context;
+cpu_context context = {0};
 
 //Initializes default values for cpu
 void cpu_init() {
     context.regs.pc = 0x100;
-    context.regs.a = 0x01;
-    context.stopped = false;
+    context.regs.sp = 0xFFFE;
+    *((short *)&context.regs.a) = 0xB001;
+    *((short *)&context.regs.b) = 0x1300;
+    *((short *)&context.regs.d) = 0xD800;
+    *((short *)&context.regs.h) = 0x4D01;
+    context.ie_reg = 0;
+    context.iflags = 0;
+    context.master_enabled = false;
+    context.ime_enabled = false;
+
+    get_timer()->div = 0xABCC;
 }
 
 void get_data() {
@@ -29,9 +39,10 @@ void get_data() {
         case AM_R_D16:
         case AM_D16: {
             unsigned short lo = bus_read(context.regs.pc++);
+            cycles(1);
             unsigned short hi = bus_read(context.regs.pc++);
+            cycles(1);
             context.data = lo | (hi << 8);
-            cycles(2);
             break;
         }
         case AM_MR_R: {
@@ -119,14 +130,15 @@ void get_data() {
         case AM_D16_R: {
             //Reads low and high bits from the bus
             unsigned short lo = bus_read(context.regs.pc++);
+            cycles(1);
             unsigned short hi = bus_read(context.regs.pc++);
+            cycles(1);
             //Sets memory to be low or'd with high shifted to the left by 8
             context.mem = lo | (hi << 8);
             //Determines destination is memory
             context.dest_is_mem = true;
             //Reads data from register 2
             context.data = read_reg(context.inst.reg_2);
-            cycles(2);
             break;
         }
         case AM_MR_D8: {
@@ -152,12 +164,14 @@ void get_data() {
          case AM_R_A16: {
             //Assigns low and high bits based on bus
             unsigned short lo = bus_read(context.regs.pc++);
+            cycles(1);
             unsigned short hi = bus_read(context.regs.pc++);
+            cycles(1);
             //Gets address from low and high
             unsigned short address = lo | (hi << 8);
             //Reads data from bus
             context.data = bus_read(address);
-            cycles(3);
+            cycles(1);
             break;
         }
     }
@@ -188,6 +202,7 @@ void exec() {
         case IN_RETI: proc_reti(&context); break;
         case IN_JR: proc_jr(&context); break;
         case IN_DI: proc_di(&context); break;
+        case IN_EI: proc_ei(&context); break;
         case IN_LDH: proc_ldh(&context); break;
         case IN_XOR: proc_xor(&context); break;
         case IN_PUSH: proc_push(&context); break;
@@ -202,29 +217,59 @@ void exec() {
         case IN_OR: proc_or(&context); break;
         case IN_CP: proc_cp(&context); break;
         case IN_CB: proc_cb(&context); break;
+        case IN_RLCA: proc_rlca(&context); break;
+        case IN_RRCA: proc_rrca(&context); break;
+        case IN_RLA: proc_rla(&context); break;
+        case IN_RRA: proc_rra(&context); break;
+        case IN_STOP: proc_stop(&context); break;
+        case IN_DAA: proc_daa(&context); break;
+        case IN_CPL: proc_cpl(&context); break;
+        case IN_SCF: proc_scf(&context); break;
+        case IN_CCF: proc_ccf(&context); break;
+        case IN_HALT: proc_halt(&context); break;
         default: NOT_IMPL;
     }
 }
 
 bool cpu_step() {
-    //As long as the cpu hasn't stopped
-    if(!context.stopped) {
+    //As long as the cpu hasn't halted
+    if(!context.halt) {
         unsigned short temp_pc = context.regs.pc;
         //Gets the instruction
         get_instr();
+        cycles(1);
         //Gets the data
         get_data();
-        //Debug information
+        std::string flags = ((context.regs.f & (1 << 7)) ? "Z" : "-");
+        flags += ((context.regs.f & (1 << 6)) ? "N" : "-");
+        flags += ((context.regs.f & (1 << 5)) ? "H" : "-");
+        flags += ((context.regs.f & (1 << 4)) ? "C" : "-");
         std::cout << "Ticks: " << std::setfill('0') << std::setw(8) << emu_get_struct()->ticks;
         std::cout << "\tPC: " << std::setfill('0') << std::setw(4) << std::hex << (int)temp_pc << "\t" << get_name(context.inst.type);
         std::cout << "\tExecuting instruction: " << std::setfill('0') << std::setw(2) << std::hex << (int)context.opcode;
         std::cout << "\tNext two opcodes: (" << std::setfill('0') << std::setw(2) << std::hex << (int)bus_read(temp_pc + 1) << ", " << std::setw(2) << (int)bus_read(temp_pc + 2) << ").";
         std::cout << "\tRegister A: " << std::setfill('0') << std::setw(2) << std::hex << (int)context.regs.a << " Register BC: " << std::setw(2) << (int)context.regs.b << std::setw(2) << (int)context.regs.c 
         << " Register DE: " << std::setw(2) << (int)context.regs.d << std::setw(2) << (int)context.regs.e << " Register HL: " << std::setw(2) << (int)context.regs.h << 
-        std::setw(2) << (int)context.regs.l << std::endl;
+        std::setw(2) << (int)context.regs.l;
+        std::cout << "\tFlags: " << flags << std::endl;
+        debug_update();
+        debug_print();
         //Executes the instruction
         exec();
     }
+    else {
+        cycles(1);
+        if(context.iflags)
+        context.halt = false;
+    }
+
+    if(context.master_enabled) {
+        handle_interrupt();
+        context.ime_enabled = false;
+    }
+
+    if(context.ime_enabled)
+        context.master_enabled = true;
     return true;
 }
 
@@ -246,11 +291,12 @@ unsigned short read_reg(reg_type reg) {
         case RT_DE: return rev_reg((unsigned short)context.regs.d);
         case RT_HL: return rev_reg((unsigned short)context.regs.h);
         */
+       
         case RT_AF: return rev_reg(*(unsigned short *)&context.regs.a);
         case RT_BC: return rev_reg(*(unsigned short *)&context.regs.b);
         case RT_DE: return rev_reg(*(unsigned short *)&context.regs.d);
         case RT_HL: return rev_reg(*(unsigned short *)&context.regs.h);
-
+        
         case RT_PC: return context.regs.pc;
         case RT_SP: return context.regs.sp;
         default: return 0;
@@ -273,7 +319,6 @@ void set_reg(reg_type reg, unsigned short value) {
         case RT_E: context.regs.e = value & 0xFF; break;
         case RT_H: context.regs.h = value & 0xFF; break;
         case RT_L: context.regs.l = value & 0xFF; break;
-
         case RT_AF: *((unsigned short *)&context.regs.a) = rev_reg(value); break;
         case RT_BC: *((unsigned short *)&context.regs.b) = rev_reg(value); break;
         case RT_DE: *((unsigned short *)&context.regs.d) = rev_reg(value); break;
@@ -346,4 +391,52 @@ unsigned char stack_pop() {
 unsigned short stack_pop16() {
     //Reads high and low of value and returns it
     return((stack_pop() << 8) | stack_pop());
+}
+
+unsigned char get_iflags() {
+    return context.iflags;
+}
+
+void set_iflags(unsigned char value) {
+    context.iflags = value;
+}
+
+void int_handle(unsigned short address) {
+    stack_push16(context.regs.pc);
+    context.regs.pc = address;
+}
+
+bool int_check(unsigned short address, interrupt_type inter) {
+    if((context.iflags & inter) && (context.ie_reg & inter)) {
+        int_handle(address);
+        context.iflags &= ~inter;
+        context.halt = false;
+        context.master_enabled = false;
+
+        return true;
+    }
+    else
+        return false;
+}
+
+void request_interrupt(interrupt_type type) {
+    context.iflags |= type;
+}
+
+void handle_interrupt() {
+    if(int_check(0x40, VBLANK)) {
+
+    }
+    else if(int_check(0x48, LCD_STAT)) {
+
+    }
+    else if(int_check(0x50, TIMER)) {
+        
+    }
+    else if(int_check(0x58, SERIAL)) {
+        
+    }
+    else if(int_check(0x60, JOYPAD)) {
+        
+    }
 }
