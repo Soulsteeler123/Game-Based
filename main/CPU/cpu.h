@@ -2,7 +2,7 @@
 #include "../reusable.h"
 #include "../instructions/instr.h"
 
-//Short cuts to deal with z and c flag bit sets
+//Short cuts to deal with flag bit sets
 #define CPU_ZFLAG BIT(context->regs.f, 7)
 #define CPU_NFLAG BIT(context->regs.f, 6)
 #define CPU_HFLAG BIT(context->regs.f, 5)
@@ -87,5 +87,7 @@ unsigned char get_iflags();
 //Sets value of interrupt flags
 void set_iflags(unsigned char value);
 
+//Determines if interrupt is needed
 void request_interrupt(interrupt_type type);
+//Determines which interrupt needs to be handled
 void handle_interrupt();

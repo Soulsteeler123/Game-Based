@@ -19,6 +19,8 @@ emu_struct *emu_get_struct();
 //Increaments the cycles
 void cycles(int cycle);
 
+//Handles the SDL events
 void sdl_events();
 
+//Runs the cpu
 void cpu_run();

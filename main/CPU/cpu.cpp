@@ -17,7 +17,6 @@ void cpu_init() {
     context.iflags = 0;
     context.master_enabled = false;
     context.ime_enabled = false;
-
     get_timer()->div = 0xABCC;
 }
 
@@ -144,11 +143,11 @@ void get_data() {
         case AM_MR_D8: {
             //Reads data from bus based on pc counter
             context.data = bus_read(context.regs.pc++);
+            cycles(1);
             //Reads memory from register 1
             context.mem = read_reg(context.inst.reg_1);
             //Determines destination is memory
             context.dest_is_mem = true;
-            cycles(1);
             break;
         }
         case AM_MR: {
@@ -233,13 +232,17 @@ void exec() {
 
 bool cpu_step() {
     //As long as the cpu hasn't halted
+    std::ofstream file;
+    //If context is still in motion
     if(!context.halt) {
+        file.open("output.txt", std::ios_base::app);
         unsigned short temp_pc = context.regs.pc;
         //Gets the instruction
         get_instr();
         cycles(1);
         //Gets the data
         get_data();
+        //Outputs debug information
         std::string flags = ((context.regs.f & (1 << 7)) ? "Z" : "-");
         flags += ((context.regs.f & (1 << 6)) ? "N" : "-");
         flags += ((context.regs.f & (1 << 5)) ? "H" : "-");
@@ -252,22 +255,34 @@ bool cpu_step() {
         << " Register DE: " << std::setw(2) << (int)context.regs.d << std::setw(2) << (int)context.regs.e << " Register HL: " << std::setw(2) << (int)context.regs.h << 
         std::setw(2) << (int)context.regs.l;
         std::cout << "\tFlags: " << flags << std::endl;
+        file << "Ticks: " << std::setfill('0') << std::setw(8) << emu_get_struct()->ticks <<
+        "\tPC: " << std::setfill('0') << std::setw(4) << std::hex << (int)temp_pc << "\t" << get_name(context.inst.type) <<
+        "\tExecuting instruction: " << std::setfill('0') << std::setw(2) << std::hex << (int)context.opcode <<
+        "\tNext two opcodes: (" << std::setfill('0') << std::setw(2) << std::hex << (int)bus_read(temp_pc + 1) << ", " << std::setw(2) << (int)bus_read(temp_pc + 2) << ")." <<
+        "\tRegister A: " << std::setfill('0') << std::setw(2) << std::hex << (int)context.regs.a << " Register BC: " << std::setw(2) << (int)context.regs.b << std::setw(2) << (int)context.regs.c <<
+        " Register DE: " << std::setw(2) << (int)context.regs.d << std::setw(2) << (int)context.regs.e << " Register HL: " << std::setw(2) << (int)context.regs.h <<  std::setw(2) << (int)context.regs.l <<
+        "\tFlags: " << flags << std::endl;
+        //Attempts to grab debug information from IO and output
         debug_update();
         debug_print();
         //Executes the instruction
         exec();
+        file.close();
     }
     else {
+        //If the interrupt flags are set, exits the halt status
         cycles(1);
         if(context.iflags)
-        context.halt = false;
+            context.halt = false;
     }
 
+    //If master is enabled, handles the interrupt and unsets the ime
     if(context.master_enabled) {
         handle_interrupt();
         context.ime_enabled = false;
     }
 
+    //If ime is enabled, enables master
     if(context.ime_enabled)
         context.master_enabled = true;
     return true;
@@ -283,15 +298,7 @@ unsigned short read_reg(reg_type reg) {
         case RT_D: return context.regs.d;
         case RT_E: return context.regs.e;
         case RT_H: return context.regs.h;
-        case RT_L: return context.regs.l;
-        //Might be wrong idk
-        /*
-        case RT_AF: return rev_reg((unsigned short)context.regs.a);
-        case RT_BC: return rev_reg((unsigned short)context.regs.b);
-        case RT_DE: return rev_reg((unsigned short)context.regs.d);
-        case RT_HL: return rev_reg((unsigned short)context.regs.h);
-        */
-       
+        case RT_L: return context.regs.l;       
         case RT_AF: return rev_reg(*(unsigned short *)&context.regs.a);
         case RT_BC: return rev_reg(*(unsigned short *)&context.regs.b);
         case RT_DE: return rev_reg(*(unsigned short *)&context.regs.d);
@@ -323,13 +330,13 @@ void set_reg(reg_type reg, unsigned short value) {
         case RT_BC: *((unsigned short *)&context.regs.b) = rev_reg(value); break;
         case RT_DE: *((unsigned short *)&context.regs.d) = rev_reg(value); break;
         case RT_HL: *((unsigned short *)&context.regs.h) = rev_reg(value); break;
-
         case RT_PC: context.regs.pc = value;
         case RT_SP: context.regs.sp = value;
         default: break;
     }
 }
 
+//Returns 8 bit value of registers
 unsigned char read_reg8(reg_type reg) {
     switch(reg) {
         case RT_A: return context.regs.a;
@@ -345,6 +352,7 @@ unsigned char read_reg8(reg_type reg) {
     }
 }
 
+//Sets 8 bit value to registers
 void set_reg8(reg_type reg, unsigned char value) {
     switch(reg) {
         case RT_A: context.regs.a = value & 0xFF; break;
@@ -401,16 +409,22 @@ void set_iflags(unsigned char value) {
     context.iflags = value;
 }
 
+//Handles the interrupts by pushing pc value onto the stack and reassigning the pc
 void int_handle(unsigned short address) {
     stack_push16(context.regs.pc);
     context.regs.pc = address;
 }
 
 bool int_check(unsigned short address, interrupt_type inter) {
+    //Checks if an interrupt flag is set
     if((context.iflags & inter) && (context.ie_reg & inter)) {
+        //Handles the interrupt
         int_handle(address);
+        //Ands its flag values with the given interrupt type's approximate value
         context.iflags &= ~inter;
+        //Exits the halt
         context.halt = false;
+        //Disables master
         context.master_enabled = false;
 
         return true;
@@ -419,11 +433,13 @@ bool int_check(unsigned short address, interrupt_type inter) {
         return false;
 }
 
+//Or's the current flags with the interrupt type
 void request_interrupt(interrupt_type type) {
     context.iflags |= type;
 }
 
 void handle_interrupt() {
+    //Checks which interrupt needs to be handled and handles it
     if(int_check(0x40, VBLANK)) {
 
     }

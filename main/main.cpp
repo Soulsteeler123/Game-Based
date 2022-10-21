@@ -9,6 +9,7 @@
 //Contains all emulator context
 static emu_struct context;
 
+//All SDL values and information
 SDL_Window *sdlWindow;
 SDL_Renderer *sdlRender;
 SDL_Texture *sdlText;
@@ -43,10 +44,12 @@ int emu_main(int argc, char* argv[]) {
     std::cout << "SDL Initialized..." << std::endl;
     TTF_Init();
     std::cout << "TTF Initialized..." << std::endl;
-
+    std::remove("output.txt");
+    //Creates game window
     SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, 0, &sdlWindow, &sdlRender);
+    //Makes thread for CPU
     std::thread t1(cpu_run);
-
+    //Runs until the game window closes
     while(!context.die) {
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         sdl_events();
@@ -59,7 +62,7 @@ emu_struct *emu_get_struct() {
     return &context;
 }
 
-void delay(unsigned int ms) {
+void delay(unsigned long ms) {
     //Will delay the program window
     SDL_Delay(ms);
 }
@@ -78,6 +81,7 @@ void cycles(int cycle) {
 
 void sdl_events() {
     SDL_Event event;
+    //Properly closes program if window is closed
     while(SDL_PollEvent(&event) > 0) {
         /**
          * SDL_UpdateWindowSurface(sdlWindow); 

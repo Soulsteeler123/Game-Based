@@ -10,7 +10,7 @@
 #define BIT(a, n) ((a & (1 << n)) ? 1 : 0)
 
 //Sets bit
-#define BIT_SET(a, n, on) (on ? (a) |= (1 << n) : (a) &= ~(1 << n))
+#define BIT_SET(a, n, on) { if (on) a |= (1 << n); else a &= ~(1 << n); }
 
 //Checks if number of indeterminate bases is between two other numbers
 #define BETWEEN(a, b, c) ((a >= b) && (a >= c))
@@ -19,4 +19,4 @@
 #define NOT_IMPL { std::cout << "Not yet implemented." << std::endl; exit(-1); }
 
 //Delays program when needed
-void delay(unsigned int ms);
+void delay(unsigned long ms);

@@ -110,24 +110,32 @@ void bus_write16(unsigned short address, unsigned short value) {
 }
 
 unsigned char io_read(unsigned short address) {
+    //Returns first value of stored data
     if(address == 0xFF01)
         return data[0];
+    //Returns second value of stored data
     else if(address == 0xFF02)
         return data[1];
+    //Returns what's written to the timer
     else if(BETWEEN(address, 0xFF04, 0xFF07))
         return timer_read(address);
+    //Returns the interrupt flags
     else if(address == 0xFF0F)
         return get_iflags();
     std::cout << "Unsupported bus read3 at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
     return 0;
 }
 void io_write(unsigned short address, unsigned char value) {
+    //Assigns address to the first half of data
     if(address == 0xFF01)
         data[0] = value;
+    //Assigns address to the second half of data
     else if(address == 0xFF02)
         data[1] = value;
+    //Writes value at the address to the timer
     else if(BETWEEN(address, 0xFF04, 0xFF07))
         timer_write(address, value);
+    //Sets the interrupt flags to the given value
     else if(address == 0xFF0F)
         set_iflags(value);
     else

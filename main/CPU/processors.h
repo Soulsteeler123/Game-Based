@@ -160,7 +160,7 @@ static void proc_jr(cpu_context *context) {
 }
 
 static void proc_di(cpu_context *context) {
-    //Just enables master
+    //Just disables master
     context->master_enabled = false;
 }
 
@@ -215,16 +215,24 @@ static void proc_push(cpu_context *context) {
 }
 
 static void proc_inc(cpu_context *context) {
+    //Gets value of register 1 plus 1
     unsigned short value = read_reg(context->inst.reg_1) + 1;
+    //If register 1 is a 16 bit register, increment cycles
     if(is_16bit(context->inst.reg_1))
         cycles(1);
+    //If register 1 is the HL register and the mode is MR
     if(context->inst.reg_1 == RT_HL && context->inst.mode == AM_MR) {
+        //Gets the value from the HL register + 1
         value = bus_read(read_reg(RT_HL)) + 1;
+        //And's itself with FF
         value &= 0xFF;
+        //Writes the new value to the bus
         bus_write(read_reg(RT_HL), value);
     }
     else {
+        //Sets register 1 the given value
         set_reg(context->inst.reg_1, value);
+        //Re-reads the new value
         value = read_reg(context->inst.reg_1);
     }
 
@@ -235,16 +243,23 @@ static void proc_inc(cpu_context *context) {
 }
 
 static void proc_dec(cpu_context *context) {
+    //Gets value of register 1 minus 1
     unsigned short value = read_reg(context->inst.reg_1) - 1;
 
+    //If register 1 is a 16 bit register, increments the cycles
     if(is_16bit(context->inst.reg_1))
         cycles(1);
+    //If register 1 is register HL and the mode is MR
     if(context->inst.reg_1 == RT_HL && context->inst.mode == AM_MR) {
+        //Gets the value from the HL register minus 1
         value = bus_read(read_reg(RT_HL)) - 1;
+        //Writes the new value to the bus
         bus_write(read_reg(RT_HL), value);
     }
     else {
+        //Sets register 1 to the new value
         set_reg(context->inst.reg_1, value);
+        //Re-Reads the new value
         value = read_reg(context->inst.reg_1);
     }
 
@@ -254,30 +269,37 @@ static void proc_dec(cpu_context *context) {
 }
 
 static void proc_add(cpu_context *context) {
-    unsigned int value = read_reg(context->inst.reg_1) + context->data;
+    //Gets the value of register 1 plus the read data
+    unsigned long value = read_reg(context->inst.reg_1) + context->data;
+    //Checks if register 1 is a 16 bit register
     bool is16 = is_16bit(context->inst.reg_1);
+    //Flag variables
+    int z, h, c;
     if(is16)
         cycles(1);
-    
+    //If register 1 is the sp register, gets the new value
     if(context->inst.reg_1 == RT_SP) 
         value = read_reg(context->inst.reg_1) + (char)context->data;
-    int z, h, c;
+    //If register 1 is 16 bit
     if(is16) {
         z = -1;
         h = (read_reg(context->inst.reg_1) & 0xFFF) + (context->data & 0xFFF) >= 0x1000;
-        c = ((unsigned int)read_reg(context->inst.reg_1)) + ((unsigned int)context->data) >= 0x10000;
+        c = (((unsigned long)read_reg(context->inst.reg_1)) + ((unsigned long)context->data)) >= 0x10000;
     }
+    //If register 1 is the SP register
     else if(context->inst.reg_1 == RT_SP) {
         z = 0;
         h = (read_reg(context->inst.reg_1) & 0xF) + (context->data & 0xF) >= 0x10;
-        c = (int)(read_reg(context->inst.reg_1) & 0xFF) + (int)(context->data & 0xFF) >= 0x100;
+        c = ((int)(read_reg(context->inst.reg_1) & 0xFF) + (int)(context->data & 0xFF)) >= 0x100;
     }
+    //Otherwise
     else {
         z = (value & 0xFF) == 0;
         h = (read_reg(context->inst.reg_1) & 0xF) + (context->data & 0xF) >= 0x10;
-        c = (int)(read_reg(context->inst.reg_1) & 0xFF) + (int)(context->data & 0xFF) >= 0x100;
+        c = ((int)(read_reg(context->inst.reg_1) & 0xFF) + (int)(context->data & 0xFF)) >= 0x100;
     }
 
+    //Sets the new value of register 1 and sets the new flags
     set_reg(context->inst.reg_1, value & 0xFFFF);
     cpu_flags(context, z, 0, h, c);
 }
@@ -292,6 +314,7 @@ static void proc_adc(cpu_context *context) {
     cpu_flags(context, context->regs.a == 0, 0, (rega & 0xF) + (data & 0xF) + flagc > 0xF, data + rega + flagc > 0xFF);
 }
 
+//Subtracts register 1 from the data
 static void proc_sub(cpu_context *context) {
     unsigned short value = read_reg(context->inst.reg_1) - context->data;
     int z = value == 0;
@@ -313,21 +336,25 @@ static void proc_sbc(cpu_context *context) {
     cpu_flags(context, z, 1, h, c);
 }
 
+//Ands register a with the data
 static void proc_and(cpu_context *context) {
     context->regs.a &= context->data;
     cpu_flags(context, context->regs.a == 0, 0, 1, 0);
 }
 
+//Or's register a with the data
 static void proc_or(cpu_context *context) {
     context->regs.a |= context->data & 0xFF;
     cpu_flags(context, context->regs.a == 0, 0, 0, 0);
 }
 
+//Sets flag values
 static void proc_cp(cpu_context *context) {
     int value = (int)context->regs.a - (int)context->data;
     cpu_flags(context, value == 0, 1, ((int)context->regs.a & 0x0F) - ((int)context->data & 0x0F) < 0, value < 0);
 }
 
+//Sets registers and flags to given values based on CB type
 static void proc_cb(cpu_context *context) {
     unsigned op = context->data;
     reg_type reg = cb_decode(op & 0b111);
@@ -427,6 +454,7 @@ static void proc_cb(cpu_context *context) {
     }
 }
 
+//Changes register a based on c flag and updates flags
 static void proc_rlca(cpu_context *context) {
     unsigned char temp = context->regs.a;
     bool cset = (temp >> 7) & 1;
@@ -436,6 +464,7 @@ static void proc_rlca(cpu_context *context) {
     cpu_flags(context, 0, 0, 0, cset);
 }
 
+//Changes register a based on c flag and updates flags
 static void proc_rrca(cpu_context *context) {
     unsigned char cset = context->regs.a & 1;
     context->regs.a >>= 1;
@@ -444,6 +473,7 @@ static void proc_rrca(cpu_context *context) {
     cpu_flags(context, 0, 0, 0, cset);
 }
 
+//Changes register a based on c flag and updates flags
 static void proc_rla(cpu_context *context) {
     unsigned char temp = context->regs.a;
     unsigned char cset = (temp >> 7) & 1; 
@@ -452,6 +482,7 @@ static void proc_rla(cpu_context *context) {
     cpu_flags(context, 0, 0, 0, cset);
 }
 
+//Changes register a based on c flag and updates flags
 static void proc_rra(cpu_context *context) {
     unsigned char cflag = CPU_CFLAG;
     unsigned char new_cflag = context->regs.a & 1;
@@ -461,11 +492,13 @@ static void proc_rra(cpu_context *context) {
     cpu_flags(context, 0, 0, 0, new_cflag);
 }
 
+//Stops the program
 static void proc_stop(cpu_context *context) {
     std::cout << "Stopping..." << std::endl;
     NOT_IMPL
 }
 
+//Changes register a based on n flag and updates flags
 static void proc_daa(cpu_context *context) {
     unsigned char temp = 0;
     int cflag = 0;
@@ -484,18 +517,22 @@ static void proc_daa(cpu_context *context) {
 }
 
 static void proc_cpl(cpu_context *context) {
+    //Register a get's its approximate value and updates flags
     context->regs.a = ~context->regs.a;
     cpu_flags(context, -1, 1, 1, -1);
 }
 
+//Changes flags
 static void proc_scf(cpu_context *context) {
     cpu_flags(context, -1, 0, 0, 1);
 }
 
+//Changes flags
 static void proc_ccf(cpu_context *context) {
     cpu_flags(context, -1, 0, 0, CPU_CFLAG ^ 1);
 }
 
+//Enables halt sequence
 static void proc_halt(cpu_context *context) {
     context->halt = true;
 }
