@@ -3,16 +3,17 @@
 #include "../RAM/ram.h"
 #include "../CPU/cpu.h"
 #include "../Timer/timer.h"
+#include "../PPU/ppu.h"
+#include "../DMA/dma.h"
 char data[2];
-
+unsigned char ly = 0;
 unsigned char bus_read(unsigned short address) {
     //Cartridge address
     if(address < 0x8000)
         return cart_read(address);
+    //Map Data
     else if(address < 0xA000) {
-        //TODO
-        std::cout << "Unsupported bus read1 at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
-        NOT_IMPL
+        return ppu_vram_read(address);
     }
     //Cartridge address
     else if(address < 0xC000) {
@@ -28,10 +29,10 @@ unsigned char bus_read(unsigned short address) {
     }
     else if(address < 0xFEA0) {
         //0AM
-        //TODO
-        std::cout << "Unsupported bus read2 at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
-        //NOT_IMPL
-        return 0;
+        if ((dma_transfer()))
+            return 0xFF;
+        else
+            return ppu_oam_read(address);
     }
     else if(address < 0xFF00) {
         //Unusable
@@ -56,26 +57,22 @@ void bus_write(unsigned short address, unsigned char value) {
     if(address < 0x8000) 
         cart_write(address, value);
     else if(address < 0xA000) {
-        //TODO
-        std::cout << "Unsupported bus write1 at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
-        //NOT_IMPL
+        ppu_vram_write(address, value);
     }
     //Cartridge address
     else if(address < 0xC000) {
-        return cart_write(address, value);
+       cart_write(address, value);
     }
     //Working ram address
     else if(address < 0xE000) {
-        return wram_write(address, value);
+        wram_write(address, value);
     }
     else if(address < 0xFE00) {
         //Echo ram, not needed
     }
     else if(address < 0xFEA0) {
-        //0AM
-        //TODO
-        std::cout << "Unsupported bus write2 at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
-        //NOT_IMPL
+        if(!dma_transfer())
+            ppu_oam_write(address, value);
     }
     else if(address < 0xFF00) {
         //Unusable
@@ -90,7 +87,7 @@ void bus_write(unsigned short address, unsigned char value) {
     }
     //High ram address
     else {
-        return hram_write(address, value);
+        hram_write(address, value);
     }
 }
 
@@ -117,11 +114,14 @@ unsigned char io_read(unsigned short address) {
     else if(address == 0xFF02)
         return data[1];
     //Returns what's written to the timer
-    else if(BETWEEN(address, 0xFF04, 0xFF07))
+    else if(BETWEEN(address, 0xFF04, 0xFF07)) 
         return timer_read(address);
     //Returns the interrupt flags
     else if(address == 0xFF0F)
         return get_iflags();
+    else if(address == 0xFF44) 
+        return ly++;
+    
     std::cout << "Unsupported bus read3 at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
     return 0;
 }
@@ -138,6 +138,10 @@ void io_write(unsigned short address, unsigned char value) {
     //Sets the interrupt flags to the given value
     else if(address == 0xFF0F)
         set_iflags(value);
+    else if (address == 0xFF46) {
+        dma_start(value);
+        std::cout << "DMA START!" << std::endl;
+    }
     else
         std::cout << "Unsupported bus write3 at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
 }

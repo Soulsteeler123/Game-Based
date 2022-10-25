@@ -59,7 +59,7 @@ static const std::map<int, instruction> instructions {
     {0x31, {IN_LD, AM_R_D16, RT_SP}},
     {0x32, {IN_LD, AM_HLD_R, RT_HL, RT_A}},
     {0x33, {IN_INC, AM_R, RT_SP}},
-    {0x33, {IN_INC, AM_MR, RT_HL}},
+    {0x34, {IN_INC, AM_MR, RT_HL}},
     {0x35, {IN_DEC, AM_MR, RT_HL}},
     {0x36, {IN_LD, AM_MR_D8, RT_HL}},
     {0x37, {IN_SCF}},

@@ -24,3 +24,5 @@ void sdl_events();
 
 //Runs the cpu
 void cpu_run();
+
+void sdl_update();

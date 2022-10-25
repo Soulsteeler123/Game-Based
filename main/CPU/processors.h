@@ -171,12 +171,13 @@ static void proc_ei(cpu_context *context) {
 
 static void proc_ldh(cpu_context *context) {
     //If register 1 is register a
-    if(context->inst.reg_1 == RT_A) 
+    if(context->inst.reg_1 == RT_A) {
         //Sets register 1 the bus read value of data or'd with FF
         set_reg(context->inst.reg_1, bus_read(0xFF00 | context->data));
+    }
     else
-        //Writes to bus the data or'd with FF with register a
-        bus_write(0xFF00 | context->data, context->regs.a);
+        //Writes to bus the location stored in memory the value of register a
+        bus_write(context->mem, context->regs.a);
         
     cycles(1);    
     
@@ -356,7 +357,7 @@ static void proc_cp(cpu_context *context) {
 
 //Sets registers and flags to given values based on CB type
 static void proc_cb(cpu_context *context) {
-    unsigned op = context->data;
+    unsigned char op = context->data;
     reg_type reg = cb_decode(op & 0b111);
     unsigned char bit = (op >> 3) & 0b111;
     unsigned char bitop = (op >> 6) & 0b11;
