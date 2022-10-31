@@ -8,6 +8,7 @@
 #include "Timer/timer.h"
 #include "BUS/bus.h"
 #include "DMA/dma.h"
+#include "PPU/ppu.h"
 //Contains all emulator context
 static emu_struct context;
 
@@ -66,10 +67,13 @@ int emu_main(int argc, char* argv[]) {
     //Makes thread for CPU
     std::thread t1(cpu_run);
     //Runs until the game window closes
+    unsigned long prev_frame = 0;
     while(!context.die) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        //std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         sdl_events();
-        sdl_update();
+        if(prev_frame != ppu_get_context()->frame)
+            sdl_update();
+        prev_frame = ppu_get_context()->frame;
     }
     return 0;
 }
@@ -84,12 +88,17 @@ void delay(unsigned long ms) {
     SDL_Delay(ms);
 }
 
+unsigned long get_ticks() {
+    return SDL_GetTicks();
+}
+
 void cycles(int cycle) {
 
     for(int i = 0; i < cycle; i++)
         for (int j = 0; j < 4; j++) {
             context.ticks++;
             timer_tick();
+            ppu_tick();
         }
     dma_tick();
 }
@@ -112,6 +121,7 @@ void cpu_run() {
     //Initializes cpu
     cpu_init();
     timer_init();
+    ppu_init();
     //Auto sets values for the context
     context.running = true;
     context.paused = false;

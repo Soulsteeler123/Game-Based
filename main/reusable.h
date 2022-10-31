@@ -5,6 +5,7 @@
 #include <string>
 #include <map>
 #include <thread>
+#include <cstring>
 
 //Gets bit
 #define BIT(a, n) ((a & (1 << n)) ? 1 : 0)
@@ -20,3 +21,5 @@
 
 //Delays program when needed
 void delay(unsigned long ms);
+
+unsigned long get_ticks();

@@ -5,8 +5,8 @@
 #include "../Timer/timer.h"
 #include "../PPU/ppu.h"
 #include "../DMA/dma.h"
+#include "../LCD/lcd.h"
 char data[2];
-unsigned char ly = 0;
 unsigned char bus_read(unsigned short address) {
     //Cartridge address
     if(address < 0x8000)
@@ -119,8 +119,8 @@ unsigned char io_read(unsigned short address) {
     //Returns the interrupt flags
     else if(address == 0xFF0F)
         return get_iflags();
-    else if(address == 0xFF44) 
-        return ly++;
+    else if(BETWEEN(address, 0xFF40, 0xFF4B)) 
+        return lcd_read(address);
     
     std::cout << "Unsupported bus read3 at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
     return 0;
@@ -138,10 +138,8 @@ void io_write(unsigned short address, unsigned char value) {
     //Sets the interrupt flags to the given value
     else if(address == 0xFF0F)
         set_iflags(value);
-    else if (address == 0xFF46) {
-        dma_start(value);
-        std::cout << "DMA START!" << std::endl;
-    }
+    else if(BETWEEN(address, 0xFF40, 0xFF4B))
+        lcd_write(address, value);
     else
         std::cout << "Unsupported bus write3 at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
 }

@@ -8,7 +8,7 @@ void debug_update() {
     //If the right value was written to IO
     if(bus_read(0xFF02) == 0x81) {
         //Gets value of message then clears the IO
-        message[size++] += bus_read(0xFF01);
+        message[size++] = bus_read(0xFF01);
         bus_write(0xFF02, 0);
     }
 }

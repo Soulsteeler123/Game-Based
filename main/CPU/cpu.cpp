@@ -242,6 +242,7 @@ bool cpu_step() {
         cycles(1);
         //Gets the data
         get_data();
+        /*
         //Outputs debug information
         std::string flags = ((context.regs.f & (1 << 7)) ? "Z" : "-");
         flags += ((context.regs.f & (1 << 6)) ? "N" : "-");
@@ -262,9 +263,11 @@ bool cpu_step() {
         "\tRegister A: " << std::setfill('0') << std::setw(2) << std::hex << (int)context.regs.a << " Register BC: " << std::setw(2) << (int)context.regs.b << std::setw(2) << (int)context.regs.c <<
         " Register DE: " << std::setw(2) << (int)context.regs.d << std::setw(2) << (int)context.regs.e << " Register HL: " << std::setw(2) << (int)context.regs.h <<  std::setw(2) << (int)context.regs.l <<
         "\tFlags: " << flags << std::endl;
+        
         //Attempts to grab debug information from IO and output
         debug_update();
         debug_print();
+        */
         //Executes the instruction
         exec();
         file.close();

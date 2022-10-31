@@ -26,3 +26,5 @@ void sdl_events();
 void cpu_run();
 
 void sdl_update();
+
+unsigned long get_ticks();

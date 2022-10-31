@@ -1,6 +1,6 @@
 #include "instr.h"
 #include "../CPU/cpu.h"
-
+#include "../BUS/bus.h"
 //Lookup table for all instruction registers based on opcode
 static const std::map<int, instruction> instructions {
     {-1, {IN_NONE}},
