@@ -119,10 +119,11 @@ unsigned char io_read(unsigned short address) {
     //Returns the interrupt flags
     else if(address == 0xFF0F)
         return get_iflags();
+    //Returns what's in the lcd at the address
     else if(BETWEEN(address, 0xFF40, 0xFF4B)) 
         return lcd_read(address);
     
-    std::cout << "Unsupported bus read3 at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
+    std::cout << "Unsupported bus read at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
     return 0;
 }
 void io_write(unsigned short address, unsigned char value) {
@@ -138,8 +139,9 @@ void io_write(unsigned short address, unsigned char value) {
     //Sets the interrupt flags to the given value
     else if(address == 0xFF0F)
         set_iflags(value);
+    //WRites the value to the lcd
     else if(BETWEEN(address, 0xFF40, 0xFF4B))
         lcd_write(address, value);
     else
-        std::cout << "Unsupported bus write3 at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
+        std::cout << "Unsupported bus write at " << std::setfill('0') << std::setw(4) << std::hex << (int)address << std::endl;
 }

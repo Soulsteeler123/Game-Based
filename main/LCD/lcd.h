@@ -16,11 +16,13 @@ struct lcd_context {
     unsigned char win_y;
     unsigned char win_x;
 
+    //Color arrays
     unsigned long bg_colors[4];
     unsigned long sp1_colors[4];
     unsigned long sp2_colors[4];
 };
 
+//Determines current mode of the lcd
 enum lcd_mode {
     MODE_HBLANK,
     MODE_VBLANK,
@@ -28,6 +30,7 @@ enum lcd_mode {
     MODE_XFER
 };
 
+//Determines the source lcd
 enum stat_src {
     SS_HBLANK = (1 << 3),
     SS_VBLANK = (1 << 4),

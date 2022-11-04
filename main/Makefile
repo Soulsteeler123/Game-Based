@@ -1,2 +1,2 @@
 all:
-	g++ -I../src/Include -L../src/lib -o Game_Based main.cpp CPU/cpu.cpp BUS/bus.cpp Cartridge/cart.cpp PPU/ppu.cpp PPU/sm.cpp Timer/timer.cpp instructions/instr.cpp RAM/ram.cpp debug/debug.cpp DMA/dma.cpp LCD/lcd.cpp -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf
+	g++ -I../src/Include -L../src/lib -o Game_Based main.cpp CPU/cpu.cpp BUS/bus.cpp Cartridge/cart.cpp PPU/ppu.cpp PPU/sm.cpp PPU/pipeline.cpp Timer/timer.cpp instructions/instr.cpp RAM/ram.cpp debug/debug.cpp DMA/dma.cpp LCD/lcd.cpp -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf
