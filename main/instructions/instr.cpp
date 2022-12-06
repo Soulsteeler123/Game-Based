@@ -19,7 +19,7 @@ static const std::map<int, instruction> instructions {
     {0x0C, {IN_INC, AM_R, RT_C}},
     {0x0D, {IN_DEC, AM_R, RT_C}},
     {0x0E, {IN_LD, AM_R_D8, RT_C}},
-    {0x0F, {IN_RLCA}},
+    {0x0F, {IN_RRCA}},
 
     {0x10, {IN_STOP}},
     {0x11, {IN_LD, AM_R_D16, RT_DE}},
@@ -209,7 +209,7 @@ static const std::map<int, instruction> instructions {
     {0xBF, {IN_CP, AM_R, RT_A, RT_A}},
     
     {0xC0, {IN_RET, AM_IMP, RT_NONE, RT_NONE, CT_NZ}},
-    {0xC1, {IN_POP, AM_IMP, RT_BC}},
+    {0xC1, {IN_POP, AM_R, RT_BC}},
     {0xC2, {IN_JP, AM_D16, RT_NONE, RT_NONE, CT_NZ}},
     {0xC3, {IN_JP, AM_D16}},
     {0xC4, {IN_CALL, AM_D16, RT_NONE, RT_NONE, CT_NZ}},
@@ -225,9 +225,8 @@ static const std::map<int, instruction> instructions {
     {0xCE, {IN_ADC, AM_R_D8, RT_A}},
     {0xCF, {IN_RST, AM_IMP, RT_NONE, RT_NONE, CT_NONE, 0x08}},
 
-
     {0xD0, {IN_RET, AM_IMP, RT_NONE, RT_NONE, CT_NC}},
-    {0xD1, {IN_POP, AM_IMP, RT_DE}},
+    {0xD1, {IN_POP, AM_R, RT_DE}},
     {0xD2, {IN_JP, AM_D16, RT_NONE, RT_NONE, CT_NC}},
     {0xD4, {IN_CALL, AM_D16, RT_NONE, RT_NONE, CT_NC}},
     {0xD5, {IN_PUSH, AM_R, RT_DE}},
@@ -253,7 +252,7 @@ static const std::map<int, instruction> instructions {
     {0xEF, {IN_RST, AM_IMP, RT_NONE, RT_NONE, CT_NONE, 0x28}},
 
     {0xF0, {IN_LDH, AM_R_A8, RT_A}},
-    {0xF1, {IN_POP, AM_IMP, RT_AF}},
+    {0xF1, {IN_POP, AM_R, RT_AF}},
     {0xF2, {IN_LD, AM_R_MR, RT_A, RT_C}},
     {0xF3, {IN_DI}},
     {0xF5, {IN_PUSH, AM_R, RT_AF}},

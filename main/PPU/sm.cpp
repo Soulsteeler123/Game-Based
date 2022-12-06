@@ -13,7 +13,7 @@ void increment_ly() {
     //Increments ly by 1
     lcd_get_context()->ly++;
 
-    //If ly is equal to lyc
+    //If ly is equal to ly compare
     if(lcd_get_context()->ly == lcd_get_context()->lyc) {
         LCDS_LYC_SET(1);
 
@@ -63,7 +63,7 @@ void ppu_mode_vblank() {
         //If ly exceeds the lines per frame
         if(lcd_get_context()->ly >= LINES_PER_FRAME) {
             //Sets the LCD state mode to OAM
-            LCDS_MODE_SET(MODE_OAM)
+            LCDS_MODE_SET(MODE_OAM);
             //Resets ly
             lcd_get_context()->ly = 0;
         }  
@@ -82,7 +82,7 @@ void ppu_mode_hblank() {
         //If ly exceeds the Y resolution
         if(lcd_get_context()->ly >= YRES) {
             //Resets LCD state mode to VBLANK
-            LCDS_MODE_SET(MODE_VBLANK)
+            LCDS_MODE_SET(MODE_VBLANK);
             //Requests interrupt
             request_interrupt(VBLANK);
 
@@ -109,7 +109,6 @@ void ppu_mode_hblank() {
             
             frame_count++;
             prev_frame = get_ticks();
-
         }
         //Else just sets LCD state mode to OAM
         else {

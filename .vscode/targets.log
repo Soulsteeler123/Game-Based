@@ -7,9 +7,8 @@ make: *** c:\Users\Jordan\Desktop\Program_Shit\Game-Based\main_files: No such fi
 # License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
- 
 
-# Make data base, printed on Fri Nov 04 10:34:30 2022
+# Make data base, printed on Tue Dec 06 10:06:58 2022
 
 # Variables
 
@@ -42,7 +41,7 @@ PSMODULEPATH = C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\Wi
 # default
 MAKE_COMMAND := make.exe
 # environment
-CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_11428_MPUQEJCHMCITALTI
+CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_13008_BMBMYXSDCIDLULNH
 # environment
 VS160COMCOMNTOOLS = C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools\
 # environment
@@ -52,7 +51,7 @@ VSCODE_HANDLES_UNCAUGHT_ERRORS = true
 # default
 .VARIABLES := 
 # environment
-VSCODE_CODE_CACHE_PATH = C:\Users\Jordan\AppData\Roaming\Code\CachedData\d045a5eda657f4d7b676dedbfa7aab8207f8a075
+VSCODE_CODE_CACHE_PATH = C:\Users\Jordan\AppData\Roaming\Code\CachedData\6261075646f055b99068d3688932416f2346dd3b
 # environment
 LANG = C
 # default
@@ -72,7 +71,7 @@ PROGRAMFILES = C:\Program Files (x86)
 # environment
 COMMONPROGRAMW6432 = C:\Program Files\Common Files
 # environment
-VSCODE_PID = 11428
+VSCODE_PID = 13008
 # environment
 VSCODE_NLS_CONFIG = {"locale":"en-us","availableLanguages":{},"_languagePackSupport":true}
 # environment
@@ -142,7 +141,7 @@ ELECTRON_RUN_AS_NODE = 1
 # environment
 TEMP = C:\Users\Jordan\AppData\Local\Temp
 # environment
-VSCODE_IPC_HOOK = \\.\pipe\caf4b82a2d712fee4f1e03c8ed8b71fb-1.72.2-main-sock
+VSCODE_IPC_HOOK = \\.\pipe\caf4b82a2d712fee4f1e03c8ed8b71fb-1.73.1-main-sock
 # default
 .RECIPEPREFIX := 
 # environment
@@ -157,8 +156,7 @@ PROCESSOR_REVISION = 7100
 CHOCOLATEYTOOLSLOCATION = C:\tools
 # environment
 PROCESSOR_IDENTIFIER = AMD64 Family 23 Model 113 Stepping 0, AuthenticAMD
-# variable set  
-hash-table stats:
+# variable set hash-table stats:
 # Load=72/1024=7%, Rehash=0, Collisions=4/76=5%
 
 # Pattern-specific Variable Values
@@ -197,6 +195,6 @@ all:
 # strcache performance: lookups = 3 / hit rate = 33%
 # hash-table stats:
 # Load=2/8192=0%, Rehash=0, Collisions=0/3=0%
-# Finished Make data base on Fri Nov 04 10:34:30 2022
+# Finished Make data base on Tue Dec 06 10:06:58 2022
 
  

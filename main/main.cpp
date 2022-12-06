@@ -9,6 +9,7 @@
 #include "BUS/bus.h"
 #include "DMA/dma.h"
 #include "PPU/ppu.h"
+
 //Contains all emulator context
 static emu_struct context;
 
@@ -63,11 +64,12 @@ int emu_main(int argc, char* argv[]) {
     sdlText = SDL_CreateTexture(sdlRender, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, WIDTH, HEIGHT);
 
     SDL_CreateWindowAndRenderer(16 * 8 * scale, 32 * 8 * scale, 0, &sdlDebugWindow, &sdlDebugRender);
-    sdlDebugText = SDL_CreateTexture(sdlDebugRender, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, (16 * 8 * scale) + (16 * scale), (32 * 8 * scale) + (64 * scale));
     sdlDebugSurf = SDL_CreateRGBSurface(0, (16 * 8 * scale) + (16 * scale), (32 * 8 * scale) + (64 * scale), 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+    sdlDebugText = SDL_CreateTexture(sdlDebugRender, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, (16 * 8 * scale) + (16 * scale), (32 * 8 * scale) + (64 * scale));
     int x, y;
     SDL_GetWindowPosition(sdlWindow, &x, &y);
     SDL_SetWindowPosition(sdlDebugWindow, x + WIDTH + 10, y);
+
     //Makes thread for CPU
     std::thread t1(cpu_run);
     //Runs until the game window closes
@@ -97,14 +99,14 @@ unsigned long get_ticks() {
 }
 
 void cycles(int cycle) {
-
-    for(int i = 0; i < cycle; i++)
+    for(int i = 0; i < cycle; i++) {
         for (int j = 0; j < 4; j++) {
             context.ticks++;
             timer_tick();
             ppu_tick();
         }
-    dma_tick();
+        dma_tick();
+    }
 }
 
 void sdl_events() {
@@ -122,9 +124,11 @@ void sdl_events() {
 }
 
 void cpu_run() {
+    //Initializes timer
+    timer_init();
     //Initializes cpu
     cpu_init();
-    timer_init();
+    //Initializes ppu
     ppu_init();
     //Auto sets values for the context
     context.running = true;
@@ -164,7 +168,7 @@ void display_tile(SDL_Surface *surface, unsigned short start, unsigned short til
             color = hi | lo;
             //Sets the correct tile values
             rc.x = x + ((7 - bit) * scale);
-            rc.y = y + ((tileY / 2) * scale);
+            rc.y = y + (tileY / 2 * scale);
             rc.w = scale;
             rc.h = scale;
 

@@ -52,8 +52,6 @@ struct fifo_context {
     unsigned char map_x;
     //Y tile
     unsigned char tile_y;
-    //X tile
-    unsigned char tile_x;
     //Fifo size
     unsigned char fifo_x;
 };
@@ -64,13 +62,13 @@ struct oam {
     unsigned char x;
     unsigned char tile;
     //Colored background panel
-    unsigned cgb_pn : 3;
-    unsigned vram : 1;
-    unsigned pn : 1;
-    unsigned xflip : 1;
-    unsigned yflip : 1;
+    unsigned char cgb_pn : 3;
+    unsigned char vram : 1;
+    unsigned char pn : 1;
+    unsigned char xflip : 1;
+    unsigned char yflip : 1;
     //Background color palette
-    unsigned bgp : 1;
+    unsigned char bgp : 1;
 };
 
 struct ppu_context {
@@ -78,13 +76,13 @@ struct ppu_context {
     oam oam_ram[40];
     //VRAM data
     unsigned char vram[0x2000];
+    //Pixel fifo color
+    fifo_context pfc;
     //Current frame
     unsigned long frame;
     //Current number of line ticks
     unsigned long line_ticks;
     unsigned long *video_buffer;
-    //Pixel fifo color
-    fifo_context pfc;
 };
 void ppu_init();
 void ppu_tick();

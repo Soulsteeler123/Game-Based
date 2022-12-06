@@ -61,7 +61,6 @@ void lcd_write(unsigned short address, unsigned char value) {
     //DMA
     if(offset == 6) 
         dma_start(value);
-    
     //Updates the palette based on which address is passed in
     if(address == 0xFF47)
         update_palette(value, 0);

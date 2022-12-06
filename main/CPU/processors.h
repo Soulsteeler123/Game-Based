@@ -81,6 +81,8 @@ static void proc_ld(cpu_context *context) {
             //Writes to bus
             bus_write(context->mem, context->data);
         }
+
+        cycles(1);
     }
     //If instruction mode is of AM_HL_SPR, special case
     else if(context->inst.mode == AM_HL_SPR) {
@@ -104,8 +106,8 @@ static void proc_goto(cpu_context *context, unsigned short address, bool push) {
     if(condition(context)) {
         //If a stack is needed, pushes pc register onto stack
         if(push) {
-            stack_push16(context->regs.pc);
             cycles(2);
+            stack_push16(context->regs.pc);
         }
         //Assigns pc register to address
         context->regs.pc = address;
@@ -171,10 +173,9 @@ static void proc_ei(cpu_context *context) {
 
 static void proc_ldh(cpu_context *context) {
     //If register 1 is register a
-    if(context->inst.reg_1 == RT_A) {
+    if(context->inst.reg_1 == RT_A) 
         //Sets register 1 the bus read value of data or'd with FF
         set_reg(context->inst.reg_1, bus_read(0xFF00 | context->data));
-    }
     else
         //Writes to bus the location stored in memory the value of register a
         bus_write(context->mem, context->regs.a);
@@ -281,23 +282,19 @@ static void proc_add(cpu_context *context) {
     //If register 1 is the sp register, gets the new value
     if(context->inst.reg_1 == RT_SP) 
         value = read_reg(context->inst.reg_1) + (char)context->data;
+
+    z = (value & 0xFF) == 0;
+    h = (read_reg(context->inst.reg_1) & 0xF) + (context->data & 0xF) >= 0x10;
+    c = ((int)(read_reg(context->inst.reg_1) & 0xFF) + (int)(context->data & 0xFF)) >= 0x100;
+
+    //If register 1 is the SP register
+    if(context->inst.reg_1 == RT_SP) 
+        z = 0;
     //If register 1 is 16 bit
-    if(is16) {
+    else if(is16) {
         z = -1;
         h = (read_reg(context->inst.reg_1) & 0xFFF) + (context->data & 0xFFF) >= 0x1000;
         c = (((unsigned long)read_reg(context->inst.reg_1)) + ((unsigned long)context->data)) >= 0x10000;
-    }
-    //If register 1 is the SP register
-    else if(context->inst.reg_1 == RT_SP) {
-        z = 0;
-        h = (read_reg(context->inst.reg_1) & 0xF) + (context->data & 0xF) >= 0x10;
-        c = ((int)(read_reg(context->inst.reg_1) & 0xFF) + (int)(context->data & 0xFF)) >= 0x100;
-    }
-    //Otherwise
-    else {
-        z = (value & 0xFF) == 0;
-        h = (read_reg(context->inst.reg_1) & 0xF) + (context->data & 0xF) >= 0x10;
-        c = ((int)(read_reg(context->inst.reg_1) & 0xFF) + (int)(context->data & 0xFF)) >= 0x100;
     }
 
     //Sets the new value of register 1 and sets the new flags
@@ -311,7 +308,7 @@ static void proc_adc(cpu_context *context) {
     unsigned short rega = context->regs.a;
     unsigned short flagc = CPU_CFLAG;
 
-    context->regs.a = (data, rega, flagc) & 0xFF;
+    context->regs.a = (data + rega + flagc) & 0xFF;
     cpu_flags(context, context->regs.a == 0, 0, (rega & 0xF) + (data & 0xF) + flagc > 0xF, data + rega + flagc > 0xFF);
 }
 
@@ -362,6 +359,9 @@ static void proc_cb(cpu_context *context) {
     unsigned char bit = (op >> 3) & 0b111;
     unsigned char bitop = (op >> 6) & 0b11;
     unsigned char regval = read_reg8(reg);
+
+    cycles(1);
+
     if(reg == RT_HL)
         cycles(2);
 
@@ -406,7 +406,7 @@ static void proc_cb(cpu_context *context) {
         case 2: {
             //RL
             unsigned char old = regval;
-            regval >>= 1;
+            regval <<= 1;
             regval |= cflag;
             set_reg8(reg, regval);
             cpu_flags(context, !regval, 0, 0, !!(old & 0x80));
@@ -459,7 +459,7 @@ static void proc_cb(cpu_context *context) {
 static void proc_rlca(cpu_context *context) {
     unsigned char temp = context->regs.a;
     bool cset = (temp >> 7) & 1;
-    temp = (temp >> 1) | cset;
+    temp = (temp << 1) | cset;
     context->regs.a = temp;
 
     cpu_flags(context, 0, 0, 0, cset);

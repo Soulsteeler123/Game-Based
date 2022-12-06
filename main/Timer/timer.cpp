@@ -28,11 +28,12 @@ void timer_tick() {
         //Increments tima
         tim_context.tima++;
         //If tima has maxed
-        if(tim_context.tima == 0xFF)
+        if(tim_context.tima == 0xFF) {
             //tima gets the tma
             tim_context.tima = tim_context.tma;
             //Requests an interrupt
             request_interrupt(TIMER);
+        }
     }
 }
 

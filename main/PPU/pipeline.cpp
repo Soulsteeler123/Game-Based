@@ -48,7 +48,8 @@ bool pipeline_fifo_add() {
     if(ppu_get_context()->pfc.pixel_fifo.size > 8) 
         //fifo is full
         return false;
-        //Gets the x from the pfc
+    
+    //Gets the x from the pfc
     int x = ppu_get_context()->pfc.fetch_x - (8 - (lcd_get_context()->scroll_x % 8));
 
     int bit;
@@ -111,8 +112,8 @@ void pipeline_fetch() {
     }
 }
 
-void pipleine_push_pixel() {
-    //If fifo isn't full
+void pipeline_push_pixel() {
+    //If fifo is full
     if(ppu_get_context()->pfc.pixel_fifo.size > 8) {
         //Pops the head of the pixel fifo
         unsigned long data = pixel_fifo_pop();
@@ -139,7 +140,7 @@ void pipeline_process() {
         pipeline_fetch();
 
     //Push the pixel
-    pipleine_push_pixel();
+    pipeline_push_pixel();
 }
 
 void pipeline_fifo_reset() {

@@ -248,6 +248,7 @@ bool cpu_step() {
         flags += ((context.regs.f & (1 << 6)) ? "N" : "-");
         flags += ((context.regs.f & (1 << 5)) ? "H" : "-");
         flags += ((context.regs.f & (1 << 4)) ? "C" : "-");
+        /*
         std::cout << "Ticks: " << std::setfill('0') << std::setw(8) << emu_get_struct()->ticks;
         std::cout << "\tPC: " << std::setfill('0') << std::setw(4) << std::hex << (int)temp_pc << "\t" << get_name(context.inst.type);
         std::cout << "\tExecuting instruction: " << std::setfill('0') << std::setw(2) << std::hex << (int)context.opcode;
@@ -256,6 +257,7 @@ bool cpu_step() {
         << " Register DE: " << std::setw(2) << (int)context.regs.d << std::setw(2) << (int)context.regs.e << " Register HL: " << std::setw(2) << (int)context.regs.h << 
         std::setw(2) << (int)context.regs.l;
         std::cout << "\tFlags: " << flags << std::endl;
+        
         file << "Ticks: " << std::setfill('0') << std::setw(8) << emu_get_struct()->ticks <<
         "\tPC: " << std::setfill('0') << std::setw(4) << std::hex << (int)temp_pc << "\t" << get_name(context.inst.type) <<
         "\tExecuting instruction: " << std::setfill('0') << std::setw(2) << std::hex << (int)context.opcode <<
@@ -263,7 +265,8 @@ bool cpu_step() {
         "\tRegister A: " << std::setfill('0') << std::setw(2) << std::hex << (int)context.regs.a << " Register BC: " << std::setw(2) << (int)context.regs.b << std::setw(2) << (int)context.regs.c <<
         " Register DE: " << std::setw(2) << (int)context.regs.d << std::setw(2) << (int)context.regs.e << " Register HL: " << std::setw(2) << (int)context.regs.h <<  std::setw(2) << (int)context.regs.l <<
         "\tFlags: " << flags << std::endl;
-        
+        */
+        /*
         //Attempts to grab debug information from IO and output
         debug_update();
         debug_print();
